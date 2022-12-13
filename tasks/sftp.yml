@@ -15,7 +15,7 @@
 
 - name: Save private key to file
   ansible.builtin.copy:
-    content: "{{ openscap_sftp_private_key }}"
+    src: "{{ openscap_sftp_private_key }}"
     dest: /root/.ssh/{{ openscap_sftp_user }}
     owner: root
     group: root

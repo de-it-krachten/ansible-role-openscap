@@ -6,8 +6,13 @@ openscap_file="{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace
 openscap_report="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.html"
 openscap_results="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.xml"
 
-openscap_gpg_recipient="{{ openscap_gpg_recipient }}"
-openscap_sftp_upload_path="{{ openscap_sftp_upload_path }}"
+packages_yum="{{ openscap_tmp_dir }}/packages-{{ inventory_hostname }}.yum"
+packages_apt="{{ openscap_tmp_dir }}/packages-{{ inventory_hostname }}.apt"
+repos_yum="{{ openscap_tmp_dir }}/repos-{{ inventory_hostname }}.yum"
+repos_apt="{{ openscap_tmp_dir }}/repos-{{ inventory_hostname }}.apt"
+
+openscap_gpg_recipient="{{ openscap_gpg_recipient | default('') }}"
+openscap_sftp_upload_path="{{ openscap_sftp_upload_path | default('') }}"
 
 
 function Cleanup
@@ -17,6 +22,10 @@ function Cleanup
   rm -f ${openscap_file}
   rm -f ${openscap_report}*
   rm -f ${openscap_results}*
+  rm -f ${repos_apt}*
+  rm -f ${repos_yum}*
+  rm -f ${packages_apt}*
+  rm -f ${packages_yum}*
 
 }
 
@@ -41,21 +50,38 @@ function Report
 
 }
 
+function Package_list
+{
+
+  if [[ -x /usr/bin/apt ]] ; then
+    packages=${packages_apt}
+    repos=${repos_apt}
+    apt list --installed > ${packages} 2>/dev/null
+    grep -hE '^deb\s' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null |\
+    sed '/ppa/ s/deb //g' |\
+    sed -re 's#http://ppa\.launchpad\.net/([^/]+)/([^/]+)(.*?)$#ppa:\1/\2#g' > ${repos}
+  elif [[ -x /usr/bin/yum ]] ; then
+    packages=${packages_yum}
+    repos=${repos_yum}
+    yum list installed > ${packages}
+    yum repolist -v > ${repos}
+  fi
+
+}
+
+
 function Encrypt
 {
 
-  # Encrypt report using GPG
-  gpg --encrypt --armor \
-      --trust-model always \
-      --recipient ${openscap_gpg_recipient} \
-      --output ${openscap_report}.gpg \
-      ${openscap_report}
-
-  gpg --encrypt --armor \
-      --trust-model always \
-      --recipient ${openscap_gpg_recipient} \
-      --output ${openscap_results}.gpg \
-      ${openscap_results}
+  if [[ -f $1 ]]
+  then
+    # Encrypt report using GPG
+    gpg --encrypt --armor \
+        --trust-model always \
+        --recipient ${openscap_gpg_recipient} \
+        --output ${1}.gpg \
+        ${1}
+  fi
 
 }
 
@@ -67,6 +93,8 @@ function Send_sftp
 cd ${openscap_sftp_upload_path}
 put ${openscap_results}.gpg
 put ${openscap_report}.gpg
+put ${repos}.gpg
+put ${packages}.gpg
 bye
 EOF
 
@@ -80,19 +108,29 @@ Cleanup
 echo "--- Download latest OVAL definitions"
 Download
 
+echo "--- Create overview of installed packages including source"
+Package_list
+
 # Execute OpenSCAP
 echo "--- Create OpenSCAP report"
 Report
 
 # Encrypt report using GPG
-echo "--- Encrypt report & results using GPG"
-Encrypt
+if [[ -n $openscap_gpg_recipient ]]
+then
+  echo "--- Encrypt report & results using GPG"
+  Encrypt ${openscap_results}
+  Encrypt ${openscap_report}
+  Encrypt ${packages}
+  Encrypt ${repos}
 
-# Upload the report & results
-echo "--- Send encrypted report using SFTP"
-Send_sftp
+  # Upload the report & results
+  echo "--- Send encrypted report using SFTP"
+  Send_sftp
 
-echo "--- Delete latest files"
-Cleanup
+  echo "--- Delete latest files"
+  Cleanup
+fi
 
-echo "`date`" > /tmp/.openscap.log
+# Exit now
+exit 0

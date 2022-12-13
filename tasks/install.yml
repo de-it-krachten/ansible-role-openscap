@@ -4,3 +4,9 @@
   ansible.builtin.package:
     name: "{{ openscap_packages }}"
     state: present
+
+- name: Distribute script from template
+  ansible.builtin.template:
+    src: openscap-oval-repost.sh.j2
+    dest: /usr/local/bin/openscap-oval-report.sh
+    mode: "0700"
