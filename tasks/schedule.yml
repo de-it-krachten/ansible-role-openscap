@@ -4,12 +4,6 @@
   ansible.builtin.include_role:
     name: cron
 
-- name: Distribute script from template
-  ansible.builtin.template:
-    src: openscap-oval-repost.sh.j2
-    dest: /usr/local/bin/openscap-oval-report.sh
-    mode: "0700"
-
 - name: Schedule daily report
   ansible.builtin.cron:
     name: OpenSCAP OVAL report
