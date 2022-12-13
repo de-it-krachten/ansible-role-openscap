@@ -1,0 +1,37 @@
+---
+
+- name: Assertions
+  ansible.builtin.assert:
+    that:
+      - openscap_sftp_private_key is defined
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: /root/.ssh
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Save private key to file
+  ansible.builtin.copy:
+    content: "{{ openscap_sftp_private_key }}"
+    dest: /root/.ssh/{{ openscap_sftp_user }}
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Save connection information
+  ansible.builtin.blockinfile:
+    path: /root/.ssh/config
+    block: |
+      Host                     openscap_server
+      Hostname                 {{ openscap_sftp_host }}
+      Port                     {{ openscap_sftp_port }}
+      User                     {{ openscap_sftp_user }}
+      IdentityFile             /root/.ssh/{{ openscap_sftp_user }}
+      StrictHostKeyChecking    no
+    create: yes
+    owner: root
+    group: root
+    mode: "0600"

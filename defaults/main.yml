@@ -1,0 +1,16 @@
+---
+
+# Temporrary directory to use
+openscap_tmp_dir: /tmp
+
+# Should report be created immediately
+openscap_immediate: true
+
+# Should daily report script be installed
+openscap_schedule: false
+
+# Days & times for scheduling
+openscap_schedule_times:
+  weekday: '*'
+  minute: '05'
+  hour: '00'

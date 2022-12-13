@@ -1,0 +1,5 @@
+---
+
+# OVAL download url
+openscap_url: >-
+  https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml

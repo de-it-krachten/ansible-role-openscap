@@ -1,0 +1,9 @@
+---
+
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - libopenscap8
+  - bzip2
+  - gpg
+  - wget
