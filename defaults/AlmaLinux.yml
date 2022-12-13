@@ -1,0 +1,5 @@
+---
+
+# OVAL download url
+openscap_url: >-
+  https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2

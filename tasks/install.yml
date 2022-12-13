@@ -1,0 +1,6 @@
+---
+
+- name: Install OpenSCAP packages and requirements
+  ansible.builtin.package:
+    name: "{{ openscap_packages }}"
+    state: present

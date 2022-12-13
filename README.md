@@ -3,7 +3,7 @@
 
 # ansible-role-openscap
 
-Installs & executes OpenSCAP for rcreating OVAL reports 
+Installs & executes OpenSCAP for creating OVAL reports 
 
 
 
@@ -14,7 +14,6 @@ Installs & executes OpenSCAP for rcreating OVAL reports
 
 #### Collections
 - community.general
-- community.general
 
 ## Platforms
 
@@ -23,14 +22,13 @@ Supported platforms
 - Red Hat Enterprise Linux 7<sup>1</sup>
 - Red Hat Enterprise Linux 8<sup>1</sup>
 - Red Hat Enterprise Linux 9<sup>1</sup>
-- CentOS 7
 - OracleLinux 8
-- OracleLinux 9
+- OracleLinux 9<sup>1</sup>
 - AlmaLinux 8
-- AlmaLinux 9
+- AlmaLinux 9<sup>1</sup>
 - Ubuntu 18.04 LTS
 - Ubuntu 20.04 LTS
-- Ubuntu 22.04 LTS
+- Ubuntu 22.04 LTS<sup>1</sup>
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -42,10 +40,16 @@ Note:
 openscap_tmp_dir: /tmp
 
 # Should report be created immediately
-openscap_execution: true
+openscap_immediate: true
 
 # Should daily report script be installed
 openscap_schedule: false
+
+# Days & times for scheduling
+openscap_schedule_times:
+  weekday: '*'
+  minute: '05'
+  hour: '00'
 </pre></code>
 
 ### defaults/Debian.yml
@@ -53,14 +57,6 @@ openscap_schedule: false
 # OVAL download url
 openscap_url: >-
   https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml
-
-# list of required packages
-openscap_packages:
-  - openscap-daemon
-  - bzip2
-  - gpg
-  - curl
-  - sshpass
 </pre></code>
 
 ### defaults/AlmaLinux.yml
@@ -68,15 +64,17 @@ openscap_packages:
 # OVAL download url
 openscap_url: >-
   https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
 
+### defaults/family-RedHat.yml
+<pre><code>
 # list of required packages
 openscap_packages:
   - openscap
   - openscap-scanner
   - bzip2
   - gpg
-  - curl
-  - sshpass
+  - wget
 </pre></code>
 
 ### defaults/Ubuntu.yml
@@ -84,14 +82,17 @@ openscap_packages:
 # OVAL download url
 openscap_url: >-
   https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
+</pre></code>
 
+### defaults/family-Debian.yml
+<pre><code>
 # list of required packages
 openscap_packages:
-  - openscap-daemon
+  # - openscap-daemon
+  - libopenscap8
   - bzip2
   - gpg
-  - curl
-  - sshpass
+  - wget
 </pre></code>
 
 ### defaults/RedHat.yml
@@ -99,15 +100,6 @@ openscap_packages:
 # OVAL download url
 openscap_url: >-
   https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
-
-# list of required packages
-openscap_packages:
-  - openscap
-  - openscap-scanner
-  - bzip2
-  - gpg
-  - curl
-  - sshpass
 </pre></code>
 
 ### defaults/OracleLinux.yml
@@ -115,15 +107,6 @@ openscap_packages:
 # OVAL download url
 openscap_url: >-
   https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_distribution_major_version }}.xml.bz2
-
-# list of required packages
-openscap_packages:
-  - openscap
-  - openscap-scanner
-  - bzip2
-  - gpg
-  - curl
-  - sshpass
 </pre></code>
 
 

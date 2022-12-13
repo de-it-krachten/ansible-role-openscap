@@ -1,0 +1,57 @@
+---
+
+# Generic
+generic:
+  role: ansible-role-openscap
+  role_short: openscap
+  role_description: |
+    Installs & executes OpenSCAP for creating OVAL reports 
+  collections: []
+
+# Supported platforms
+platforms:
+  centos7:
+    ci: false
+    supported: false
+  rockylinux8:
+    ci: false
+    supported: false
+  rockylinux9:
+    ci: false
+    supported: false
+  almalinux9:
+    ci: false
+    supported: true
+  oraclelinux9:
+    ci: false
+    supported: true
+  debian10:
+    ci: false
+    supported: false
+  debian11:
+    ci: false
+    supported: false
+  ubuntu2204:
+    ci: false
+    supported: true
+  fedora35:
+    ci: false
+    supported: false
+  fedora36:
+    ci: false
+    supported: false
+  alpine3:
+    ci: false
+    supported: false
+
+# Dependencies
+dependencies:
+  roles:
+    - cron
+  collections: []
+
+# Molecule
+molecule:
+  requirements:
+    roles_extra:
+      - cron

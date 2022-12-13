@@ -1,0 +1,98 @@
+#!/bin/bash -e
+
+openscap_url="{{ openscap_url }}"
+openscap_archive="{{ openscap_tmp_dir }}/{{ openscap_url | basename }}"
+openscap_file="{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace('\.bz2') }}"
+openscap_report="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.html"
+openscap_results="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.xml"
+
+openscap_gpg_recipient="{{ openscap_gpg_recipient }}"
+openscap_sftp_upload_path="{{ openscap_sftp_upload_path }}"
+
+
+function Cleanup
+{
+
+  rm -f ${openscap_archive}
+  rm -f ${openscap_file}
+  rm -f ${openscap_report}*
+  rm -f ${openscap_results}*
+
+}
+
+function Download
+{
+
+  # Download latest OVAL
+  wget -q -O ${openscap_archive} ${openscap_url}
+
+  # Unpack the archive
+  [[ ${openscap_archive} =~ \.bz2 ]] && bzip2 -d ${openscap_archive}
+
+}
+
+function Report
+{
+
+  # Execute OpenSCAP
+  oscap oval eval --results ${openscap_results} \
+                  --report ${openscap_report} \
+                  ${openscap_file} > /dev/null
+
+}
+
+function Encrypt
+{
+
+  # Encrypt report using GPG
+  gpg --encrypt --armor \
+      --trust-model always \
+      --recipient ${openscap_gpg_recipient} \
+      --output ${openscap_report}.gpg \
+      ${openscap_report}
+
+  gpg --encrypt --armor \
+      --trust-model always \
+      --recipient ${openscap_gpg_recipient} \
+      --output ${openscap_results}.gpg \
+      ${openscap_results}
+
+}
+
+function Send_sftp
+{
+
+  # Upload the report & results
+  sftp -oBatchMode=no -b - openscap_server <<EOF
+cd ${openscap_sftp_upload_path}
+put ${openscap_results}.gpg
+put ${openscap_report}.gpg
+bye
+EOF
+
+}
+
+# Delete older files
+echo "--- Delete older files"
+Cleanup
+
+# Download latest OVAL
+echo "--- Download latest OVAL definitions"
+Download
+
+# Execute OpenSCAP
+echo "--- Create OpenSCAP report"
+Report
+
+# Encrypt report using GPG
+echo "--- Encrypt report & results using GPG"
+Encrypt
+
+# Upload the report & results
+echo "--- Send encrypted report using SFTP"
+Send_sftp
+
+echo "--- Delete latest files"
+Cleanup
+
+echo "`date`" > /tmp/.openscap.log
