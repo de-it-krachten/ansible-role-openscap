@@ -23,12 +23,12 @@ Supported platforms
 - Red Hat Enterprise Linux 8<sup>1</sup>
 - Red Hat Enterprise Linux 9<sup>1</sup>
 - OracleLinux 8
-- OracleLinux 9<sup>1</sup>
+- OracleLinux 9
 - AlmaLinux 8
-- AlmaLinux 9<sup>1</sup>
+- AlmaLinux 9
 - Ubuntu 18.04 LTS
 - Ubuntu 20.04 LTS
-- Ubuntu 22.04 LTS<sup>1</sup>
+- Ubuntu 22.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms

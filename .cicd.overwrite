@@ -19,21 +19,12 @@ platforms:
   rockylinux9:
     ci: false
     supported: false
-  almalinux9:
-    ci: false
-    supported: true
-  oraclelinux9:
-    ci: false
-    supported: true
   debian10:
     ci: false
     supported: false
   debian11:
     ci: false
     supported: false
-  ubuntu2204:
-    ci: false
-    supported: true
   fedora35:
     ci: false
     supported: false

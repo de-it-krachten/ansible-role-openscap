@@ -145,6 +145,17 @@ jobs:
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
+          - name: oraclelinux9_2.9
+            distro: oraclelinux9
+            playbook: converge.yml
+            ansible: "ansible==2.9.27"
+            ansible_lint: "ansible-lint==5.4.0"
+          - name: oraclelinux9_2.13
+            distro: oraclelinux9
+            playbook: converge.yml
+            ansible: "ansible-core>2.13,<2.14"
+            ansible_lint: "ansible-lint>6,<7"
+
           - name: almalinux8_2.9
             distro: almalinux8
             playbook: converge.yml
@@ -152,6 +163,17 @@ jobs:
             ansible_lint: "ansible-lint==5.4.0"
           - name: almalinux8_2.13
             distro: almalinux8
+            playbook: converge.yml
+            ansible: "ansible-core>2.13,<2.14"
+            ansible_lint: "ansible-lint>6,<7"
+
+          - name: almalinux9_2.9
+            distro: almalinux9
+            playbook: converge.yml
+            ansible: "ansible==2.9.27"
+            ansible_lint: "ansible-lint==5.4.0"
+          - name: almalinux9_2.13
+            distro: almalinux9
             playbook: converge.yml
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
@@ -178,12 +200,25 @@ jobs:
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
+          - name: ubuntu2204_2.9
+            distro: ubuntu2204
+            playbook: converge.yml
+            ansible: "ansible==2.9.27"
+            ansible_lint: "ansible-lint==5.4.0"
+          - name: ubuntu2204_2.13
+            distro: ubuntu2204
+            playbook: converge.yml
+            ansible: "ansible-core>2.13,<2.14"
+            ansible_lint: "ansible-lint>6,<7"
+
 
     steps:
+
       - name: Check out the codebase.
         uses: actions/checkout@v3
         with:
           path: "${{ github.repository }}"
+
 
       - name: Set up Python 3.
         uses: actions/setup-python@v4
@@ -203,7 +238,7 @@ jobs:
 
       - name: Install test dependencies.
         run: |
-          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" molecule[docker] molecule-hetznercloud docker yamllint jmespath e2j2 yq
+          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" molecule[docker] yamllint jmespath e2j2 yq
 
       - name: Install required galaxy collections
         run: |
