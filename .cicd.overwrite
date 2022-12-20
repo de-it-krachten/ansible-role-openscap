@@ -46,3 +46,7 @@ molecule:
   requirements:
     roles_extra:
       - cron
+  converge:
+    vars:
+      openscap_gpg_recipient: foo@example.com
+      openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"

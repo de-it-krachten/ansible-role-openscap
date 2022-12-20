@@ -35,4 +35,4 @@
   ansible.builtin.set_fact:
     openscap_archive: "{{ openscap_tmp_dir }}/{{ openscap_url | basename }}"
     openscap_file: "{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace('\\.bz2') }}"
-    openscap_report: "{{ openscap_tmp_dir }}/openscap-report-oval-{{ inventory_hostname }}.html"
+    openscap_report: "{{ openscap_log_dir }}/openscap-report-oval-{{ inventory_hostname }}.html"

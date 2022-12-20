@@ -1,33 +1,33 @@
 #!/bin/bash -e
 
-openscap_url="{{ openscap_url }}"
-openscap_archive="{{ openscap_tmp_dir }}/{{ openscap_url | basename }}"
-openscap_file="{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace('\.bz2') }}"
-openscap_report="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.html"
-openscap_results="{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.xml"
+############################################################
+# Variables
+############################################################
 
-packages_yum="{{ openscap_tmp_dir }}/packages-{{ inventory_hostname }}.yum"
-packages_apt="{{ openscap_tmp_dir }}/packages-{{ inventory_hostname }}.apt"
-repos_yum="{{ openscap_tmp_dir }}/repos-{{ inventory_hostname }}.yum"
-repos_apt="{{ openscap_tmp_dir }}/repos-{{ inventory_hostname }}.apt"
+# Generic
+tmpdir=$(mktemp -d)
+
+# OVAL file(s)
+
+openscap_url="{{ openscap_url }}"
+openscap_archive="$tmpdir/{{ openscap_url | basename }}"
+openscap_file="$tmpdir/{{ openscap_url | basename | regex_replace('\.bz2') }}"
+
+# Result file(s)
+openscap_report="{{ openscap_log_dir }}/oval-report-{{ inventory_hostname }}.html"
+openscap_results="{{ openscap_log_dir }}/oval-report-{{ inventory_hostname }}.xml"
+packages_yum="{{ openscap_log_dir }}/packages-{{ inventory_hostname }}.yum"
+packages_apt="{{ openscap_log_dir }}/packages-{{ inventory_hostname }}.apt"
+repos_yum="{{ openscap_log_dir }}/repos-{{ inventory_hostname }}.yum"
+repos_apt="{{ openscap_log_dir }}/repos-{{ inventory_hostname }}.apt"
 
 openscap_gpg_recipient="{{ openscap_gpg_recipient | default('') }}"
 openscap_sftp_upload_path="{{ openscap_sftp_upload_path | default('') }}"
 
 
-function Cleanup
-{
-
-  rm -f ${openscap_archive}
-  rm -f ${openscap_file}
-  rm -f ${openscap_report}*
-  rm -f ${openscap_results}*
-  rm -f ${repos_apt}*
-  rm -f ${repos_yum}*
-  rm -f ${packages_apt}*
-  rm -f ${packages_yum}*
-
-}
+############################################################
+# Function
+############################################################
 
 function Download
 {
@@ -73,15 +73,15 @@ function Package_list
 function Encrypt
 {
 
-  if [[ -f $1 ]]
-  then
-    # Encrypt report using GPG
-    gpg --encrypt --armor \
-        --trust-model always \
-        --recipient ${openscap_gpg_recipient} \
-        --output ${1}.gpg \
-        ${1}
-  fi
+  File1=$1
+  File2=${tmpdir}/$(basename $1).gpg
+
+  # Encrypt report using GPG
+  gpg --encrypt --armor \
+      --trust-model always \
+      --recipient ${openscap_gpg_recipient} \
+      --output ${File2} \
+      ${File1}
 
 }
 
@@ -90,19 +90,21 @@ function Send_sftp
 
   # Upload the report & results
   sftp -oBatchMode=no -b - openscap_server <<EOF
+lcd ${tmpdir}
 cd ${openscap_sftp_upload_path}
-put ${openscap_results}.gpg
-put ${openscap_report}.gpg
-put ${repos}.gpg
-put ${packages}.gpg
+put *.gpg
 bye
 EOF
 
 }
 
-# Delete older files
-echo "--- Delete older files"
-Cleanup
+############################################################
+# Main
+############################################################
+
+# Make sure temporary files are cleaned at exit
+trap 'rm -fr ${tmpdir}' EXIT
+trap 'exit 1' HUP QUIT KILL TERM INT
 
 # Download latest OVAL
 echo "--- Download latest OVAL definitions"
@@ -127,9 +129,6 @@ then
   # Upload the report & results
   echo "--- Send encrypted report using SFTP"
   Send_sftp
-
-  echo "--- Delete latest files"
-  Cleanup
 fi
 
 # Exit now

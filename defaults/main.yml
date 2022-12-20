@@ -1,7 +1,10 @@
 ---
 
-# Temporrary directory to use
+# Temporary directory to use
 openscap_tmp_dir: /tmp
+
+# Log directory for holding reports etc
+openscap_log_dir: /var/log/openscap
 
 # Should report be created immediately
 openscap_immediate: true
