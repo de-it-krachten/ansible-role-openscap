@@ -36,8 +36,11 @@ Note:
 ## Role Variables
 ### defaults/main.yml
 <pre><code>
-# Temporrary directory to use
+# Temporary directory to use
 openscap_tmp_dir: /tmp
+
+# Log directory for holding reports etc
+openscap_log_dir: /var/log/openscap
 
 # Should report be created immediately
 openscap_immediate: true
@@ -118,6 +121,9 @@ openscap_url: >-
 - name: sample playbook for role 'openscap'
   hosts: all
   become: "yes"
+  vars:
+    openscap_gpg_recipient: foo@example.com
+    openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"
   tasks:
     - name: Include role 'openscap'
       ansible.builtin.include_role:

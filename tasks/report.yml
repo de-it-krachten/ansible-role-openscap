@@ -1,11 +1,5 @@
 ---
 
-# - name: Define varaibles to make it code better readable
-#   set_fact:
-#     openscap_archive: "{{ openscap_tmp_dir }}/{{ openscap_url | basename }}"
-#     openscap_file: "{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace('\\.bz2') }}"
-#     openscap_report: "{{ openscap_tmp_dir }}/oval-report-{{ inventory_hostname }}.html"
-
 - name: Delete previous files
   ansible.builtin.file:
     path: "{{ item }}"
@@ -26,14 +20,14 @@
   ansible.builtin.command: bzip2 -d {{ openscap_archive }}
   changed_when: true
   args:
-    chdir: "{{ openscap_tmp_dir }}"
+    chdir: "{{ openscap_log_dir }}"
   when: openscap_archive is search('\.bz2')
 
 - name: Execute OpenSCAP
   ansible.builtin.command: oscap oval eval --report {{ openscap_report }} {{ openscap_file }}
   changed_when: true
   args:
-    chdir: "{{ openscap_tmp_dir }}"
+    chdir: "{{ openscap_log_dir }}"
 
 - name: Retrieve report
   ansible.builtin.fetch:
