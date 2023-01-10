@@ -43,7 +43,7 @@ openscap_tmp_dir: /tmp
 openscap_log_dir: /var/log/openscap
 
 # Should report be created immediately
-openscap_immediate: true
+openscap_immediate: false
 
 # Should daily report script be installed
 openscap_schedule: false
