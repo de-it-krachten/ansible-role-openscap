@@ -32,7 +32,7 @@
 - name: Retrieve report
   ansible.builtin.fetch:
     src: "{{ openscap_report }}"
-    dest: /tmp/
+    dest: "{{ openscap_central_report_path }}/"
     flat: yes
 
 - name: Delete oval files & report
