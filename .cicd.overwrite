@@ -38,14 +38,14 @@ platforms:
 # Dependencies
 dependencies:
   roles:
-    - cron
+    - deitkrachten.cron
   collections: []
 
 # Molecule
 molecule:
   requirements:
     roles_extra:
-      - cron
+      - deitkrachten.cron
   converge:
     vars:
       openscap_gpg_recipient: foo@example.com

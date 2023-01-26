@@ -1,6 +1,6 @@
 ---
 
-- name: cron
+- name: deitkrachten.cron
   src: https://github.com/de-it-krachten/ansible-role-cron.git
   version: main
   scm: git

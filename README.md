@@ -10,7 +10,7 @@ Installs & executes OpenSCAP for creating OVAL reports
 ## Dependencies
 
 #### Roles
-- cron
+- deitkrachten.cron
 
 #### Collections
 - community.general
