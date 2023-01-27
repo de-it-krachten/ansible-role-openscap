@@ -25,10 +25,10 @@ platforms:
   debian11:
     ci: false
     supported: false
-  fedora35:
+  fedora36:
     ci: false
     supported: false
-  fedora36:
+  fedora37:
     ci: false
     supported: false
   alpine3:
@@ -38,14 +38,14 @@ platforms:
 # Dependencies
 dependencies:
   roles:
-    - cron
+    - deitkrachten.cron
   collections: []
 
 # Molecule
 molecule:
   requirements:
     roles_extra:
-      - cron
+      - deitkrachten.cron
   converge:
     vars:
       openscap_gpg_recipient: foo@example.com

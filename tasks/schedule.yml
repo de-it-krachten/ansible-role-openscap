@@ -2,7 +2,7 @@
 
 - name: Ensure all components are present
   ansible.builtin.include_role:
-    name: cron
+    name: deitkrachten.cron
 
 - name: Schedule daily report
   ansible.builtin.cron:

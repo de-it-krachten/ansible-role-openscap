@@ -10,7 +10,7 @@ Installs & executes OpenSCAP for creating OVAL reports
 ## Dependencies
 
 #### Roles
-- cron
+- deitkrachten.cron
 
 #### Collections
 - community.general
@@ -38,6 +38,9 @@ Note:
 <pre><code>
 # Temporary directory to use
 openscap_tmp_dir: /tmp
+
+# Central location to store all servers reports
+openscap_central_report_path: /var/log/openscap/central
 
 # Log directory for holding reports etc
 openscap_log_dir: /var/log/openscap
