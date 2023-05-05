@@ -15,6 +15,9 @@ openscap_immediate: false
 # Should daily report script be installed
 openscap_schedule: false
 
+# Command to schedule
+openscap_schedule_command: "/usr/local/bin/openscap-oval-report.sh"
+
 # Days & times for scheduling
 openscap_schedule_times:
   weekday: '*'

@@ -29,17 +29,22 @@
   args:
     chdir: "{{ openscap_log_dir }}"
 
+- name: Create local path
+  ansible.builtin.file:
+    path: "{{ openscap_central_report_path }}/{{ inventory_hostname }}"
+    state: directory
+    mode: "0750"
+
 - name: Retrieve report
   ansible.builtin.fetch:
     src: "{{ openscap_report }}"
-    dest: "{{ openscap_central_report_path }}/"
+    dest: "{{ openscap_central_report_path }}/{{ inventory_hostname }}/"
     flat: yes
 
-- name: Delete oval files & report
+- name: Delete oval files
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:
     - "{{ openscap_archive }}"
     - "{{ openscap_file }}"
-    - "{{ openscap_report }}"

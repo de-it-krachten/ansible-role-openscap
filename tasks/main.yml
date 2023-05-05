@@ -21,12 +21,3 @@
 - name: Schedule OVAL report
   ansible.builtin.include_tasks: schedule.yml
   when: openscap_schedule | bool
-
-# - name: Send report via e-mail
-#   ansible.builtin.include_tasks:
-#     file: mail.yml
-#     apply:
-#       delegate_to: localhost
-#   when:
-#     - openscap_mail_recipient is defined
-#     - openscap_mail_recipient | length > 0
