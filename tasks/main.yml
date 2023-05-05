@@ -10,9 +10,9 @@
   ansible.builtin.include_tasks: gpg.yml
   when: openscap_gpg_key is defined
 
-- name: Setup SSH/SFTP connectivity
-  ansible.builtin.include_tasks: sftp.yml
-  when: openscap_sftp_private_key is defined
+# - name: Setup SSH/SFTP connectivity
+#   ansible.builtin.include_tasks: sftp.yml
+#   when: openscap_sftp_private_key is defined
 
 - name: Generate OVAL report immediately
   ansible.builtin.include_tasks: report.yml
