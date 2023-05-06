@@ -10,7 +10,7 @@ Installs & executes OpenSCAP for creating OVAL reports
 ## Dependencies
 
 #### Roles
-- cron
+- deitkrachten.cron
 
 #### Collections
 - community.general
@@ -39,20 +39,69 @@ Note:
 # Temporary directory to use
 openscap_tmp_dir: /tmp
 
+# Central location to store all servers reports
+openscap_central_report_path: /var/log/openscap/central
+
 # Log directory for holding reports etc
 openscap_log_dir: /var/log/openscap
 
 # Should report be created immediately
-openscap_immediate: true
+openscap_immediate: false
 
 # Should daily report script be installed
 openscap_schedule: false
+
+# Command to schedule
+openscap_schedule_command: "/usr/local/bin/openscap-oval-report.sh"
 
 # Days & times for scheduling
 openscap_schedule_times:
   weekday: '*'
   minute: '05'
   hour: '00'
+</pre></code>
+
+### defaults/family-Debian.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - libopenscap8
+  - bzip2
+  - gpg
+  - wget
+</pre></code>
+
+### defaults/OracleLinux.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
+### defaults/Ubuntu.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
+</pre></code>
+
+### defaults/RedHat.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
+### defaults/family-RedHat.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  - openscap
+  - openscap-scanner
+  - bzip2
+  - gpg
+  - wget
 </pre></code>
 
 ### defaults/Debian.yml
@@ -67,49 +116,6 @@ openscap_url: >-
 # OVAL download url
 openscap_url: >-
   https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
-</pre></code>
-
-### defaults/family-RedHat.yml
-<pre><code>
-# list of required packages
-openscap_packages:
-  - openscap
-  - openscap-scanner
-  - bzip2
-  - gpg
-  - wget
-</pre></code>
-
-### defaults/Ubuntu.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
-</pre></code>
-
-### defaults/family-Debian.yml
-<pre><code>
-# list of required packages
-openscap_packages:
-  # - openscap-daemon
-  - libopenscap8
-  - bzip2
-  - gpg
-  - wget
-</pre></code>
-
-### defaults/RedHat.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
-</pre></code>
-
-### defaults/OracleLinux.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_distribution_major_version }}.xml.bz2
 </pre></code>
 
 

@@ -2,7 +2,7 @@
 
 - name: Ensure all components are present
   ansible.builtin.include_role:
-    name: cron
+    name: deitkrachten.cron
 
 - name: Schedule daily report
   ansible.builtin.cron:
@@ -11,21 +11,5 @@
     minute: "{{ openscap_schedule_times['minute'] }}"
     hour: "{{ openscap_schedule_times['hour'] }}"
     user: root
-    job: /usr/local/bin/openscap-oval-report.sh
+    job: "{{ openscap_schedule_command }}"
     cron_file: openscap-oval-report
-
-- name: Execute scheduled script immediately
-  when: openscap_immediate | bool
-  tags: molecule-idempotence-notest
-  block:
-
-    - name: Execute script
-      ansible.builtin.command:
-        cmd: /usr/local/bin/openscap-oval-report.sh
-      changed_when: true
-      register: __openscap_script
-
-    - name: Show output
-      ansible.builtin.debug:
-        var: __openscap_script
-
