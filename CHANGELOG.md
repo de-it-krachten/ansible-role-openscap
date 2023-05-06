@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.1.1...v1.2.0) (2023-05-06)
+
+
+### Bug Fixes
+
+* Add optional immediate report generation ([7516730](https://github.com/de-it-krachten/ansible-role-openscap/commit/75167302a85cebd507c8496a16701c5f026a5439))
+* Make central report location configurable ([56e31e1](https://github.com/de-it-krachten/ansible-role-openscap/commit/56e31e138000bf58c27f8b98dcf4221450531d8e))
+
+
+### Features
+
+* Move to namespaced role names ([f59a55e](https://github.com/de-it-krachten/ansible-role-openscap/commit/f59a55eeda8fcbf3b0b0db5ab8129dfff79de002))
+
 ## [1.1.1](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.1.0...v1.1.1) (2022-12-20)
 
 
