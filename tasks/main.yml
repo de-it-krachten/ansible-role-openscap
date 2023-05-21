@@ -6,10 +6,6 @@
 - name: Perform installation
   ansible.builtin.include_tasks: install.yml
 
-- name: Import GPG key
-  ansible.builtin.include_tasks: gpg.yml
-  when: openscap_gpg_key is defined
-
 # - name: Setup SSH/SFTP connectivity
 #   ansible.builtin.include_tasks: sftp.yml
 #   when: openscap_sftp_private_key is defined

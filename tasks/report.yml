@@ -10,36 +10,37 @@
     - "{{ openscap_report }}"
     - "{{ openscap_report }}.gpg"
 
-- name: Download latest OpenSCAP file
-  ansible.builtin.get_url:
-    url: "{{ openscap_url }}"
-    dest: "{{ openscap_archive }}"
-    mode: "0600"
-
-- name: Unpack the archive
-  ansible.builtin.command: bzip2 -d {{ openscap_archive }}
+- name: Execute the openscap script
+  ansible.builtin.command: >-
+    {{ openscap_schedule_command }}
   changed_when: true
-  args:
-    chdir: "{{ openscap_log_dir }}"
-  when: openscap_archive is search('\.bz2')
-
-- name: Execute OpenSCAP
-  ansible.builtin.command: oscap oval eval --report {{ openscap_report }} {{ openscap_file }}
-  changed_when: true
-  args:
-    chdir: "{{ openscap_log_dir }}"
 
 - name: Create local path
   ansible.builtin.file:
     path: "{{ openscap_central_report_path }}/{{ inventory_hostname }}"
     state: directory
+    owner: "{{ lookup('pipe', 'id -un') }}"
+    group: "{{ lookup('pipe', 'id -gn') }}"
     mode: "0750"
+  run_once: yes
+  become: yes
+  delegate_to: localhost
+
+- name: Get all remote files
+  ansible.builtin.find:
+    paths: "{{ openscap_log_dir }}"
+  register: __find
 
 - name: Retrieve report
   ansible.builtin.fetch:
-    src: "{{ openscap_report }}"
+    src: "{{ file.path }}"
     dest: "{{ openscap_central_report_path }}/{{ inventory_hostname }}/"
     flat: yes
+  loop: "{{ __find.files }}"
+  loop_control:
+    loop_var: file
+    label:
+      - "{{ file.path }}"
 
 - name: Delete oval files
   ansible.builtin.file:
