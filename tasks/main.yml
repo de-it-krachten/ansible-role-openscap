@@ -6,14 +6,11 @@
 - name: Perform installation
   ansible.builtin.include_tasks: install.yml
 
-# - name: Setup SSH/SFTP connectivity
-#   ansible.builtin.include_tasks: sftp.yml
-#   when: openscap_sftp_private_key is defined
-
-- name: Generate OVAL report immediately
-  ansible.builtin.include_tasks: report.yml
-  when: openscap_immediate | bool
-
 - name: Schedule OVAL report
   ansible.builtin.include_tasks: schedule.yml
   when: openscap_schedule | bool
+
+- name: Execute and retrieve output
+  ansible.builtin.include_tasks: execute.yml
+  when: openscap_immediate | bool
+

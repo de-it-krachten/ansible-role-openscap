@@ -27,14 +27,14 @@
   ci: false
   image: docker.io/dropveter/centos9s-ansible:latest
 - name: rockylinux8
-  ci: false
+  ci: true
   image: docker.io/geerlingguy/docker-rockylinux8-ansible:latest
   privileged: true
   pre_build_image: true
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:ro
 - name: rockylinux9
-  ci: false
+  ci: true
   image: docker.io/geerlingguy/docker-rockylinux9-ansible:latest
 - name: oraclelinux8
   ci: true
