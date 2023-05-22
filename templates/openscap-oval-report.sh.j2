@@ -7,7 +7,7 @@
 ##############################################################
 
 # Set temporary PATH
-export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:$PATH
 
 # Get the name of the calling script
 FILENAME=$(readlink -f $0)
@@ -30,7 +30,7 @@ CONFIGFILE=${DIRNAME}/${BASENAME_ROOT}.cfg
 LOCKFILE=${VARTMP}/${BASENAME_ROOT}.lck
 
 # Logfile & directory
-LOGDIR=$DIRNAME
+LOGDIR=/var/log
 LOGFILE=${LOGDIR}/${BASENAME_ROOT}.log
 
 # Set date/time related variables
@@ -56,12 +56,12 @@ openscap_archive="$TMPDIR/{{ openscap_url | basename }}"
 openscap_file="$TMPDIR/{{ openscap_url | basename | regex_replace('\.bz2') }}"
 
 # Result file(s)
-openscap_report="{{ openscap_log_dir }}/oval-report-{{ inventory_hostname }}.html"
-openscap_results="{{ openscap_log_dir }}/oval-report-{{ inventory_hostname }}.xml"
-packages_yum="{{ openscap_log_dir }}/packages-{{ inventory_hostname }}.yum"
-packages_apt="{{ openscap_log_dir }}/packages-{{ inventory_hostname }}.apt"
-repos_yum="{{ openscap_log_dir }}/repos-{{ inventory_hostname }}.yum"
-repos_apt="{{ openscap_log_dir }}/repos-{{ inventory_hostname }}.apt"
+openscap_report="{{ openscap_log_dir }}/oval-report.html"
+openscap_results="{{ openscap_log_dir }}/oval-report.xml"
+packages_yum="{{ openscap_log_dir }}/packages.yum"
+packages_apt="{{ openscap_log_dir }}/packages.apt"
+repos_yum="{{ openscap_log_dir }}/repos.yum"
+repos_apt="{{ openscap_log_dir }}/repos.apt"
 
 openscap_gpg_recipient="{{ openscap_gpg_recipient | default('') }}"
 openscap_sftp_upload_path="{{ openscap_sftp_upload_path | default('') }}"
@@ -208,6 +208,15 @@ do
 
 done
 shift $(($OPTIND -1))
+
+# Write to logfile only
+if [[ -t 0 ]]
+then
+  { coproc tee { tee -a $LOGFILE ;} >&3 ;} 3>&1
+  exec >&${tee[1]} 2>&1
+else
+  exec >>${LOGFILE} 2>&1
+fi
 
 # Download latest OVAL
 echo "--- Download latest OVAL definitions"
