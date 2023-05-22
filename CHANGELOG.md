@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.2.0...v1.2.1) (2023-05-22)
+
+
+### Bug Fixes
+
+* Move GPG related configuration to separate role ([64e83fd](https://github.com/de-it-krachten/ansible-role-openscap/commit/64e83fd3f21c5fef3858c2eec272b35e26aeb4e8))
+
 # [1.2.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.1.1...v1.2.0) (2023-05-06)
 
 
