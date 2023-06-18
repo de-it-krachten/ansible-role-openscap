@@ -22,12 +22,8 @@ BASENAME1_ROOT=${BASENAME1%%.*}
 DIRNAME1="${FILENAME1%/*}"
 
 # Define temorary files, debug direcotory, config and lock file
-TMPDIR=$(mktemp -d)
-VARTMPDIR=/var/tmp
+TMPDIR=/tmp
 TMPFILE=${TMPDIR}/${BASENAME}.${RANDOM}.${RANDOM}
-DEBUGDIR=${TMPDIR}/${BASENAME_ROOT}_${USER}
-CONFIGFILE=${DIRNAME}/${BASENAME_ROOT}.cfg
-LOCKFILE=${VARTMP}/${BASENAME_ROOT}.lck
 
 # Logfile & directory
 LOGDIR=/var/log
@@ -100,12 +96,49 @@ Usage : $BASENAME <flags> <arguments>
 
 Flags :
 
-   -d|--debug   : Debug mode (set -x)
-   -D|--dry-run : Dry run mode
-   -h|--help    : Prints this help message
-   -v|--verbose : Verbose output
+   -d|--debug    : Debug mode (set -x)
+   -D|--dry-run  : Dry run mode
+   -h|--help     : Prints this help message
+   -v|--verbose  : Verbose output
+
+   -i|--insecure : Disable SSL/TLS verification
 
 EOF
+
+}
+
+function Log
+{
+
+  echo "`date +"%Y-%m-%d %H:%M:%S"` | $@"
+
+}
+
+function Wait4proc
+{
+
+    local Pid=$1
+    local Counter=0
+    local Maxcounter=300
+    local Step=10
+
+    while [[ $Counter -ne $Maxcounter ]]
+    do
+      if [[ -d /proc/$Pid ]] 
+      then
+        Counter=$(($Counter+$Step))
+        sleep $Step
+      else
+        return 0
+      fi
+    done
+
+    Log "Process still running after $Maxcounter seconds .. killing it" >&2
+    kill $Pid
+    sleep 3
+    kill -9 $Pid >/dev/null 2>&1
+
+    return 1
 
 }
 
@@ -113,20 +146,61 @@ function Download
 {
 
   # Download latest OVAL
-  wget -q -O ${openscap_archive} ${openscap_url}
+  Args="-q"
+  [[ $Insecure == true ]] && Args="$Args --no-check-certificate"
+  wget ${Args} -O ${openscap_archive} ${openscap_url} || exit 1
+
+}
+
+function Extract
+{
 
   # Unpack the archive
-  [[ ${openscap_archive} =~ \.bz2 ]] && bzip2 -d ${openscap_archive}
+  if [[ ${openscap_archive} =~ \.bz2 ]]
+  then
+    bzip2 -f -k -d ${openscap_archive} || exit 1
+  fi
 
 }
 
 function Report
 {
 
-  # Execute OpenSCAP
-  oscap oval eval --results ${openscap_results} \
-                  --report ${openscap_report} \
-                  ${openscap_file} > /dev/null
+  if [[ $Debug == true ]]
+  then
+    # Execute OpenSCAP
+    oscap oval eval --verbose DEVEL \
+                    --results ${openscap_results} \
+                    --report ${openscap_report} \
+                    ${openscap_file} || exit 1
+  else
+    # Execute OpenSCAP
+    oscap oval eval --results ${openscap_results} \
+                    --report ${openscap_report} \
+                    ${openscap_file} > /dev/null &
+    Wait4proc $! || exit 1
+  fi
+
+}
+
+function Results
+{
+
+  Results=$(grep "\"SmallText resultbadB\"" ${openscap_report} | \
+  grep "\"Non-Compliant/Vulnerable/Unpatched\"" | \
+  sed 's|.*Non-Compliant/Vulnerable/Unpatched||' | \
+  sed "s/<.*//" | \
+  sed "s/.*>//")
+  Log "Vulnerabilities found: $Results"
+
+}
+
+function Compress
+{
+
+  Log "Compress report & results"
+  bzip2 -fk ${openscap_results}
+  bzip2 -fk ${openscap_report}
 
 }
 
@@ -156,18 +230,18 @@ function Package_list
 #############################################################
 
 # Make sure temporary files are cleaned at exit
-trap 'rm -fr ${TMPDIR}' EXIT
+trap 'rm -f ${TMPFILE}*' EXIT
 trap 'exit 1' HUP QUIT KILL TERM INT
 
 # Set the defaults
-Debug_level=0
+Debug=false
 Verbose=false
-Verbose_level=0
-Dry_run=false
-Echo=
+Extra_info=false
+Insecure=false
+Download=true
 
 # parse command line into arguments and check results of parsing
-while getopts :dDhtv-: OPT
+while getopts :dDihtvx-: OPT
 do
 
   # Support long options
@@ -179,23 +253,28 @@ do
 
   case $OPT in
     d|debug)
+      Debug=true
       Verbose=true
       set -vx
       ;;
-    D|dry-run)
-      Dry_run=true
-      Dry_run1="-D"
-      Echo=echo
+    D|no-download)
+      Download=false
       ;;
     h|help)
       Usage
       exit 0
+      ;;
+    i|insecure)
+      Insecure=true
       ;;
     t|transfer)
       Transfer=true
       ;;
     v|verbose)
       Verbose=true
+      ;;
+    x|extra)
+      Extra_info=true
       ;;
     *)
       echo "Unknown flag -$OPT given!" >&2
@@ -219,26 +298,57 @@ else
 fi
 
 # Download latest OVAL
-echo "--- Download latest OVAL definitions"
-Download
+if [[ $Download == true ]]
+then
+  Log "Download latest OVAL definitions"
+  Download
+else
+  Log "Skipping download of latest OVAL definitions"
+fi
 
-echo "--- Create overview of installed packages including source"
-Package_list
+# Extract the file
+Log "Extract OVAL definitions"
+Extract
+
+# Delete old log files
+Log "Delete old log files"
+rm -f \
+  ${openscap_results} \
+  ${openscap_report} \
+  ${packages_yum} \
+  ${packages_apt} \
+  ${repos_yum} \
+  ${repos_apt}
+
+if [[ $Extra_info == true ]]
+then
+  Log "Create overview of installed packages including source"
+  Package_list
+fi
 
 # Execute OpenSCAP
-echo "--- Create OpenSCAP report"
+Log "Create OpenSCAP report"
 Report
+Results
+Compress
 
 # Send encrypted reports
 if [[ $Transfer == true ]]
 then
-  echo "--- Transferring files to remote server"
+  Log "Transferring files to remote server"
   /usr/local/bin/file-transfer.sh \
     ${openscap_results} \
-    ${openscap_report} \
-    ${packages} \
-    ${repos}
+    ${openscap_report}
+  if [[ $Extra_info == true ]]
+  then
+    Log "Transfer additional files"
+    /usr/local/bin/file-transfer.sh \
+      ${packages} \
+      ${repos}
+  fi
 fi
+
+Log "Script finished"
 
 # Exit now
 exit 0

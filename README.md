@@ -22,11 +22,12 @@ Supported platforms
 - Red Hat Enterprise Linux 7<sup>1</sup>
 - Red Hat Enterprise Linux 8<sup>1</sup>
 - Red Hat Enterprise Linux 9<sup>1</sup>
-- OracleLinux 8
+- RockyLinux 8
+- RockyLinux 9
+- OracleLinux 8<sup>1</sup>
 - OracleLinux 9
 - AlmaLinux 8
 - AlmaLinux 9
-- Ubuntu 18.04 LTS
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
 
@@ -40,7 +41,20 @@ Note:
 openscap_tmp_dir: /tmp
 
 # Central location to store all servers reports
-openscap_central_report_path: /var/log/openscap/central
+openscap_central_report_path: /var/log/openscap_central
+
+# Location where a summary of the results will be written to
+# This can be used to create an HTML report of all hosts
+# openscap_central_report: "{{ openscap_central_report_path }}/report.yml"
+
+# download OVAL files centrally and distribute to nodes
+openscap_central_download: false
+
+# Collect reports to central location
+openscap_central_collection: false
+
+# Should we retrieve compressed results
+openscap_central_compressed: false
 
 # Log directory for holding reports etc
 openscap_log_dir: /var/log/openscap
@@ -54,11 +68,24 @@ openscap_schedule: false
 # Command to schedule
 openscap_schedule_command: "/usr/local/bin/openscap-oval-report.sh"
 
+# Use that should execute the commands
+openscap_execution_user: root
+
 # Days & times for scheduling
 openscap_schedule_times:
   weekday: '*'
   minute: '05'
   hour: '00'
+
+# OVAL report table
+openscap_table_name: OVAL
+openscap_table_headers:
+  - host
+  - os
+  - version
+  - date
+  - time
+  - vulnerabilities
 </pre></code>
 
 ### defaults/family-Debian.yml
@@ -118,6 +145,13 @@ openscap_url: >-
   https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
 </pre></code>
 
+### defaults/Rocky.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
 
 
 
@@ -126,8 +160,14 @@ openscap_url: >-
 <pre><code>
 - name: sample playbook for role 'openscap'
   hosts: all
-  become: "yes"
+  become: "False"
   vars:
+    openscap_central_download: True
+    openscap_central_collection: True
+    openscap_central_path: /var/log/openscap_central
+    openscap_central_report: /tmp/report.yml
+    openscap_immediate: True
+    openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"
   tasks:

@@ -10,6 +10,6 @@
     weekday: "{{ openscap_schedule_times['weekday'] }}"
     minute: "{{ openscap_schedule_times['minute'] }}"
     hour: "{{ openscap_schedule_times['hour'] }}"
-    user: root
+    user: "{{ openscap_execution_user }}"
     job: "{{ openscap_schedule_command }}"
     cron_file: openscap-oval-report

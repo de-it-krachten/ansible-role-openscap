@@ -1,51 +1,30 @@
 ---
 
-- name: Delete previous files
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "{{ openscap_archive }}"
-    - "{{ openscap_file }}"
-    - "{{ openscap_report }}"
-    - "{{ openscap_report }}.gpg"
-
-- name: Execute the openscap script
-  ansible.builtin.command: >-
-    {{ openscap_schedule_command }}
-  changed_when: true
-
-- name: Create local path
-  ansible.builtin.file:
-    path: "{{ openscap_central_report_path }}/{{ inventory_hostname }}"
-    state: directory
-    owner: "{{ lookup('pipe', 'id -un') }}"
-    group: "{{ lookup('pipe', 'id -gn') }}"
-    mode: "0750"
+- name: Create HTML report for all hosts
   run_once: yes
-  become: yes
-  delegate_to: localhost
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  block:
 
-- name: Get all remote files
-  ansible.builtin.find:
-    paths: "{{ openscap_log_dir }}"
-  register: __find
+    - name: Get all OVAL reports
+      ansible.builtin.find:
+        paths: "{{ openscap_central_report_path }}"
+        patterns: "*.html"
+        recurse: yes
+      register: __reports
 
-- name: Retrieve report
-  ansible.builtin.fetch:
-    src: "{{ file.path }}"
-    dest: "{{ openscap_central_report_path }}/{{ inventory_hostname }}/"
-    flat: yes
-  loop: "{{ __find.files }}"
-  loop_control:
-    loop_var: file
-    label:
-      - "{{ file.path }}"
+    - name: Read results
+      ansible.builtin.command: >-
+        cat "{{ openscap_central_report }}"
+      register: x
+      changed_when: false
 
-- name: Delete oval files
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "{{ openscap_archive }}"
-    - "{{ openscap_file }}"
+    - name: Import results
+      ansible.builtin.set_fact:
+        openscap_results: "{{ x.stdout | from_yaml }}"
+
+    - name: Create HTML report from template
+      ansible.builtin.template:
+        src: templates/table.html.j2
+        dest: "{{ openscap_central_report_path }}/index.html"
+        mode: "0644"
+      become: yes
