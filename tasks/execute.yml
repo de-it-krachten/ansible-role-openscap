@@ -39,6 +39,8 @@
       ansible.builtin.get_url:
         url: "{{ item }}"
         dest: "{{ __tempdir.path }}/{{ item | basename }}"
+        owner: "{{ lookup('pipe', 'id -un') }}"
+        group: "{{ lookup('pipe', 'id -gn') }}"
         mode: "0600"
       changed_when: false
       loop: "{{ oval_urls }}"
@@ -50,12 +52,14 @@
         src: "{{ __tempdir.path }}/{{ openscap_url | basename }}"
         dest: /tmp/{{ openscap_url | basename }}
         mode: "0600"
+      become: yes
       changed_when: false
 
     - name: Delete temporary directory
       ansible.builtin.file:
         path: "{{ __tempdir.path }}"
         state: absent
+      become: no
       changed_when: false
 
 
@@ -69,15 +73,29 @@
 
     - name: Delete previously created log files
       ansible.builtin.file:
-        path: /var/log/openscap-oval-report.log
+        path: "{{ item }}"
         state: absent
+      loop:
+        - /var/log/openscap-oval-report.log
+        - /var/log/openscap
+      become: yes
       when: openscap_log_deletion is defined and openscap_log_deletion | bool
+
+    - name: Create report directory
+      ansible.builtin.file:
+        name: "{{ openscap_log_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+      become: yes
 
     - name: Execute script
       ansible.builtin.command:
         cmd: "{{ openscap_schedule_command }}"
       become: yes
       changed_when: true
+      tags: molecule-idempotence-notest
 
     - name: Get vulnerabilities found
       ansible.builtin.shell: |
@@ -92,13 +110,15 @@
     - name: Create list of hosts
       ansible.builtin.lineinfile:
         path: "{{ openscap_central_report }}"
-        line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_major_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
+        line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
         regex: "^- { host: '{{ inventory_hostname }}',.*"
         create: yes
         mode: "0644"
       become: yes
       throttle: 1
       delegate_to: "{{ openscap_central_server | default('localhost') }}"
+      when: openscap_central_report is defined
+      tags: molecule-idempotence-notest
 
 
 - name: Retrieve central collection
@@ -120,11 +140,23 @@
       become: no
       delegate_to: localhost
 
-    - name: Get all remote files
+    - name: Get all remote files (compressed)
       ansible.builtin.find:
         paths: "{{ openscap_log_dir }}"
         patterns: "*.bz2"
+      become: yes
       register: __find
+      when: openscap_central_compressed | bool
+
+    - name: Get all remote files (uncompressed)
+      ansible.builtin.find:
+        paths: "{{ openscap_log_dir }}"
+        patterns:
+          - "oval-report.html"
+          - "oval-report.xml"
+      become: yes
+      register: __find
+      when: not openscap_central_compressed | bool
 
     - name: Retrieve reports locally
       ansible.builtin.fetch:
@@ -137,6 +169,7 @@
         loop_var: file
         label:
           - "{{ file.path }}"
+      tags: molecule-idempotence-notest
 
     - name: Push results to central server
       ansible.builtin.copy:

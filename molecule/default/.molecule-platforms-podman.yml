@@ -37,7 +37,7 @@
   ci: true
   image: docker.io/geerlingguy/docker-rockylinux9-ansible:latest
 - name: oraclelinux8
-  ci: true
+  ci: false
   image: docker.io/dropveter/oraclelinux8-ansible
 - name: oraclelinux9
   ci: true
@@ -55,7 +55,7 @@
   ci: false
   image: docker.io/geerlingguy/docker-debian11-ansible:latest
 - name: ubuntu1804
-  ci: true
+  ci: false
   image: docker.io/geerlingguy/docker-ubuntu1804-ansible:latest
 - name: ubuntu2004
   ci: true

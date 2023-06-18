@@ -376,8 +376,8 @@ platforms:
         server_type: cx11
   ubuntu1804:
     name: Ubuntu 18.04 LTS
-    ci: true
-    supported: true
+    ci: false
+    supported: false
     galaxy:
       name: Ubuntu
       version: bionic
@@ -570,7 +570,7 @@ galaxy:
         - bullseye
     - name: Ubuntu
       versions:
-        - 18.04
+        # - 18.04
         - 20.04
         - 22.04
     - name: Fedora

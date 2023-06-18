@@ -29,7 +29,7 @@
   server_type: cx11
   image: debian-11
 - name: ubuntu1804
-  ci: true
+  ci: false
   server_type: cx11
   image: ubuntu-18.04
 - name: ubuntu2004

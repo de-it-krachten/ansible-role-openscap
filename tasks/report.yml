@@ -1,0 +1,30 @@
+---
+
+- name: Create HTML report for all hosts
+  run_once: yes
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  block:
+
+    - name: Get all OVAL reports
+      ansible.builtin.find:
+        paths: "{{ openscap_central_report_path }}"
+        patterns: "*.html"
+        recurse: yes
+      register: __reports
+
+    - name: Read results
+      ansible.builtin.command: >-
+        cat "{{ openscap_central_report }}"
+      register: x
+      changed_when: false
+
+    - name: Import results
+      ansible.builtin.set_fact:
+        openscap_results: "{{ x.stdout | from_yaml }}"
+
+    - name: Create HTML report from template
+      ansible.builtin.template:
+        src: templates/table.html.j2
+        dest: "{{ openscap_central_report_path }}/index.html"
+        mode: "0644"
+      become: yes

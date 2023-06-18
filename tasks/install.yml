@@ -4,12 +4,16 @@
   ansible.builtin.package:
     name: "{{ openscap_packages }}"
     state: present
+  become: yes
 
 - name: Distribute script from template
   ansible.builtin.template:
     src: openscap-oval-report.sh.j2
     dest: /usr/local/bin/openscap-oval-report.sh
+    owner: root
+    group: root
     mode: "0700"
+  become: yes
 
 - name: Create report directory
   ansible.builtin.file:
@@ -18,3 +22,4 @@
     owner: root
     group: root
     mode: "0700"
+  become: yes
