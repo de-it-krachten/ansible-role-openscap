@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.2.1...v1.3.0) (2023-06-18)
+
+
+### Features
+
+* Add nice HTML report ([de9b6f6](https://github.com/de-it-krachten/ansible-role-openscap/commit/de9b6f629c11a65709d03d65bd8deb9b9c153fdb))
+* Add support for RockyLinux ([4f89338](https://github.com/de-it-krachten/ansible-role-openscap/commit/4f893384c2f2fc0b37810d0e3e904976d36b9327))
+
 ## [1.2.1](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.2.0...v1.2.1) (2023-05-22)
 
 
