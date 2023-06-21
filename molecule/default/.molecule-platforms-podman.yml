@@ -67,12 +67,12 @@
 - name: ubuntu2204
   ci: true
   image: docker.io/geerlingguy/docker-ubuntu2204-ansible:latest
-- name: fedora36
-  ci: false
-  image: docker.io/geerlingguy/docker-fedora36-ansible:latest
 - name: fedora37
   ci: false
   image: docker.io/geerlingguy/docker-fedora37-ansible:latest
+- name: fedora38
+  ci: false
+  image: docker.io/geerlingguy/docker-fedora38-ansible:latest
 - name: alpine3
   ci: false
   image: docker.io/dropveter/alpine-python3

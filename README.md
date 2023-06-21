@@ -53,8 +53,10 @@ openscap_central_download: false
 # Collect reports to central location
 openscap_central_collection: false
 
-# Should we retrieve compressed results
-openscap_central_compressed: false
+# File pattern of file to retrieve
+# openscap_log_pattern: "*.bz2"
+# openscap_log_pattern: "*.html,*.xml"
+openscap_log_pattern: "*.html"
 
 # Log directory for holding reports etc
 openscap_log_dir: /var/log/openscap
