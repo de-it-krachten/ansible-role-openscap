@@ -100,14 +100,16 @@
     - name: Get vulnerabilities found
       ansible.builtin.shell: |
         set -o pipefail
-        grep "Vulnerabilities found:" /var/log/openscap-oval-report.log | \
-        tail -1 | awk '{print $NF}'
+        log=/var/log/openscap-oval-report.log
+        vulnerabilities=$(grep "Vulnerabilities found:" $log | tail -1 | awk '{print $NF}')
+        [[ $vulnerabilities =~ : ]] && vulnerabilities="unknown"
+        echo $Vulnerabilities
       args:
         executable: /bin/bash
       changed_when: false
       register: __vulnerabilities
 
-    - name: Create list of hosts
+    - name: Write each host with specifics to yaml file as input for the report
       ansible.builtin.lineinfile:
         path: "{{ openscap_central_report }}"
         line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
@@ -140,23 +142,12 @@
       become: no
       delegate_to: localhost
 
-    - name: Get all remote files (compressed)
+    - name: Get all remote files
       ansible.builtin.find:
         paths: "{{ openscap_log_dir }}"
-        patterns: "*.bz2"
+        patterns: "{{ openscap_log_pattern }}"
       become: yes
       register: __find
-      when: openscap_central_compressed | bool
-
-    - name: Get all remote files (uncompressed)
-      ansible.builtin.find:
-        paths: "{{ openscap_log_dir }}"
-        patterns:
-          - "oval-report.html"
-          - "oval-report.xml"
-      become: yes
-      register: __find
-      when: not openscap_central_compressed | bool
 
     - name: Retrieve reports locally
       ansible.builtin.fetch:
