@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.3.0...v1.4.0) (2023-06-21)
+
+
+### Bug Fixes
+
+* Report retrieval now by file pattern ([cd9b887](https://github.com/de-it-krachten/ansible-role-openscap/commit/cd9b88777abb6d5ba92d7270360667fb9b0014a6))
+
+
+### Features
+
+* Add support for Fedora 38 ([b023466](https://github.com/de-it-krachten/ansible-role-openscap/commit/b023466aadcd3533b9d2a4bcfad41a25765feaf8))
+* Drop support for Fedora 36 ([f3e6af2](https://github.com/de-it-krachten/ansible-role-openscap/commit/f3e6af2787c8b5b169640c6bfd0366c907aa3df0))
+
 # [1.3.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.2.1...v1.3.0) (2023-06-18)
 
 
