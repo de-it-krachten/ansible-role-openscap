@@ -144,17 +144,17 @@
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
-- name: fedora36
+- name: fedora37
   ci: false
-  image: docker.io/geerlingguy/docker-fedora36-ansible:latest
+  image: docker.io/geerlingguy/docker-fedora37-ansible:latest
   privileged: true
   pre_build_image: true
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
-- name: fedora37
-  ci: false
-  image: docker.io/geerlingguy/docker-fedora37-ansible:latest
+- name: fedora38
+  ci: true
+  image: docker.io/geerlingguy/docker-fedora38-ansible:latest
   privileged: true
   pre_build_image: true
   cgroupns_mode: host
