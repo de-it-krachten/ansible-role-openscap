@@ -103,7 +103,7 @@
         log=/var/log/openscap-oval-report.log
         vulnerabilities=$(grep "Vulnerabilities found:" $log | tail -1 | awk '{print $NF}')
         [[ $vulnerabilities =~ : ]] && vulnerabilities="unknown"
-        echo $Vulnerabilities
+        echo $vulnerabilities
       args:
         executable: /bin/bash
       changed_when: false

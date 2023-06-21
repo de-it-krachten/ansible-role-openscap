@@ -30,7 +30,6 @@ Supported platforms
 - AlmaLinux 9
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
-- Fedora 38
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms

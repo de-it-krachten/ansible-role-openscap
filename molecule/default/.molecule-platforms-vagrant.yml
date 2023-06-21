@@ -65,7 +65,7 @@
   box: generic/fedora37
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
 - name: fedora38
-  ci: true
+  ci: false
   box: generic/fedora38
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
 - name: alpine3

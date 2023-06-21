@@ -71,7 +71,7 @@
   ci: false
   image: docker.io/geerlingguy/docker-fedora37-ansible:latest
 - name: fedora38
-  ci: true
+  ci: false
   image: docker.io/geerlingguy/docker-fedora38-ansible:latest
 - name: alpine3
   ci: false
