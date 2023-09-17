@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.4.0...v1.5.0) (2023-09-17)
+
+
+### Bug Fixes
+
+* Fix loop label to string ([6d75699](https://github.com/de-it-krachten/ansible-role-openscap/commit/6d75699e37e825c883f6d68bcea11f7201cc6537))
+
+
+### Features
+
+* Update supported platforms & CI ([a19e5dc](https://github.com/de-it-krachten/ansible-role-openscap/commit/a19e5dcdb9751b1d4122932845bdbc0ef4bd56f0))
+
 # [1.4.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.3.0...v1.4.0) (2023-06-21)
 
 
