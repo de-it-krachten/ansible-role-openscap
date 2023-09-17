@@ -22,15 +22,15 @@ platforms:
   debian11:
     ci: false
     supported: false
-  sles15:
+  ubuntu1804:
     ci: false
     supported: false
   opensuse15:
     ci: false
     supported: false
-  ubuntu1804:
+  sles15:
     ci: false
-    supported: false
+    supported: true
   fedora37:
     ci: false
     supported: false

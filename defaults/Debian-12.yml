@@ -1,0 +1,9 @@
+---
+
+# list of required packages
+openscap_packages:
+  - openscap-scanner
+  - openscap-utils
+  - bzip2
+  - gpg
+  - wget

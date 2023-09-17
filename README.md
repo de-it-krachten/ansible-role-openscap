@@ -28,6 +28,7 @@ Supported platforms
 - OracleLinux 9
 - AlmaLinux 8
 - AlmaLinux 9
+- SUSE Linux Enterprise 15<sup>1</sup>
 - Debian 12 (Bookworm)
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
@@ -138,7 +139,7 @@ openscap_packages:
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml
+  https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml.bz2
 </pre></code>
 
 ### defaults/AlmaLinux.yml
@@ -153,6 +154,24 @@ openscap_url: >-
 # OVAL download url
 openscap_url: >-
   https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
+### defaults/Debian-12.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  - openscap-scanner
+  - openscap-utils
+  - bzip2
+  - gpg
+  - wget
+</pre></code>
+
+### defaults/Sles.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_distribution_major_version }}.xml
 </pre></code>
 
 
