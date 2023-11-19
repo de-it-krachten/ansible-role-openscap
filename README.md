@@ -13,7 +13,6 @@ Installs & executes OpenSCAP for creating OVAL reports
 - deitkrachten.cron
 
 #### Collections
-- community.general
 
 ## Platforms
 
@@ -182,16 +181,16 @@ openscap_url: >-
 <pre><code>
 - name: sample playbook for role 'openscap'
   hosts: all
-  become: "False"
+  become: 'False'
   vars:
-    openscap_central_download: True
-    openscap_central_collection: True
+    openscap_central_download: true
+    openscap_central_collection: true
     openscap_central_path: /var/log/openscap_central
     openscap_central_report: /tmp/report.yml
-    openscap_immediate: True
+    openscap_immediate: true
     openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
     openscap_gpg_recipient: foo@example.com
-    openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"
+    openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'
   tasks:
     - name: Include role 'openscap'
       ansible.builtin.include_role:

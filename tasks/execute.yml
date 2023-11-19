@@ -158,8 +158,7 @@
       loop: "{{ __find.files }}"
       loop_control:
         loop_var: file
-        label:
-          - "{{ file.path }}"
+        label: "{{ file.path }}"
       tags: molecule-idempotence-notest
 
     - name: Push results to central server
