@@ -1,0 +1,40 @@
+---
+
+- name: Copy main ssg file
+  ansible.builtin.copy:
+    src: "{{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds.xml"
+    dest: /tmp/ssg-{{ ssg_distro }}-ds.xml
+    mode: "0644"
+
+- name: Copy tailoring file from template
+  ansible.builtin.template:
+    src: ssg-{{ ssg_distro }}-ds-tailoring-audit.xml.j2
+    dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+    mode: "0644"
+
+- name: Execute the compliance check
+  ansible.builtin.command:
+    cmd: >-
+      oscap xccdf eval
+      --results /tmp/result.xml
+      --report /tmp/result.html
+      --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+      --profile xccdf_org.ssgproject.content_profile_cis_level1_server_customized
+      /tmp/ssg-{{ ssg_distro }}-ds.xml
+  failed_when: false
+  become: yes
+
+- name: Create local path
+  ansible.builtin.file:
+    path: "{{ openscap_report_path }}"
+    state: directory
+    owner: "{{ lookup('env', 'USER') }}"
+    mode: "0750"
+  delegate_to: localhost
+  become: yes
+
+- name: Retrieve audit report
+  ansible.builtin.fetch:
+    src: "/tmp/result.html"
+    dest: "{{ openscap_report_path }}/{{ inventory_hostname }}-{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}-xccdf.html"
+    flat: yes
