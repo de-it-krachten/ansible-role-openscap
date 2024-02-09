@@ -1,0 +1,19 @@
+---
+
+- name: Distribute script from template
+  ansible.builtin.template:
+    src: openscap-oval-report.sh.j2
+    dest: /usr/local/bin/openscap-oval-report.sh
+    owner: root
+    group: root
+    mode: "0700"
+  become: yes
+
+- name: Create report directory
+  ansible.builtin.file:
+    name: "{{ openscap_log_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  become: yes

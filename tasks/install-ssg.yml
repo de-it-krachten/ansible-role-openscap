@@ -1,0 +1,97 @@
+---
+
+- name: Get OS naming
+  ansible.builtin.set_fact:
+    ssg_distro: >-
+      {%- if ansible_distribution == 'Ubuntu' -%}
+      {{ (ansible_distribution | lower) + (ansible_distribution_version | regex_replace('\.')) }}
+      {%- endif -%}
+
+- name: Fail if not supported
+  ansible.builtin.fail:
+    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} is unsupported"
+  when: ssg_distro is undefined or ssg_distro | length == 0
+
+- name: Install SSG code on control node
+  become: no
+  delegate_to: localhost
+  run_once: yes
+  block:
+
+    - name: Get latest ssg release info
+      ansible.builtin.uri:
+        url: "{{ openscap_ssg_api + '/releases/latest' }}"
+        headers: >-
+          {
+          {%- if github_token is defined and github_token | length > 0 -%}
+          "Authorization": "Bearer {{ github_token }}"
+          {%- endif -%}
+          }
+      check_mode: no
+      register: openscap_ssg_version_info
+
+    - name: Get latest release tag
+      ansible.builtin.set_fact:
+        openscap_ssg_version_latest: "{{ openscap_ssg_version_info.json.tag_name }}"
+
+    - name: Replace 'latest' by the actual version
+      ansible.builtin.set_fact:
+        openscap_ssg_version: "{{ openscap_ssg_version_latest }}"
+      when: openscap_ssg_version == 'latest'
+
+    - name: Get all ssg releases info
+      ansible.builtin.uri:
+        url: "{{ openscap_ssg_api + '/releases?per_page=1000' }}"
+        headers: >-
+          {
+          {%- if github_token is defined and github_token | length > 0 -%}
+          "Authorization": "Bearer {{ github_token }}"
+          {%- endif -%}
+          }
+      check_mode: no
+      register: openscap_ssg_version_info
+
+    - name: Get version information
+      ansible.builtin.set_fact:
+        openscap_ssg_version_info: "{{ openscap_ssg_version_info.json | json_query(query) | first }}"
+      vars:
+        query: "[?tag_name=='{{ openscap_ssg_version }}']"
+
+    - name: Show ssg release
+      ansible.builtin.debug:
+        msg:
+          - "ssg latest release    : {{ openscap_ssg_version_latest }}"
+          - "ssg requested release : {{ openscap_ssg_version }}"
+
+    - name: Get download location for binary/archive
+      ansible.builtin.set_fact:
+        openscap_ssg_url: "{{ openscap_ssg_version_info.assets | json_query(q1) | first }}"
+      vars:
+        q1: "[?name=='{{ openscap_ssg_file }}'].browser_download_url"
+
+    - name: Create tempdir on control node
+      ansible.builtin.tempfile:
+        state: directory
+      register: __tempdir
+      changed_when: false
+
+    - name: Define ssg path
+      ansible.builtin.set_fact:
+        openscap_ssg_root_path: "{{ __tempdir.path }}"
+
+    - name: Create ssg path
+      ansible.builtin.file:
+        path: "{{ openscap_ssg_path }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download ssg on control node
+      ansible.builtin.get_url:
+        url: "{{ openscap_ssg_url }}"
+        dest: "{{ __tempdir.path }}/{{ openscap_ssg_url | basename }}"
+        checksum: "sha512:{{ openscap_ssg_url }}.sha512"
+
+    - name: Extract archive
+      ansible.builtin.unarchive:
+        src: "{{ __tempdir.path }}/{{ openscap_ssg_url | basename }}"
+        dest: "{{ openscap_ssg_root_path }}/"

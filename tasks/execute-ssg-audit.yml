@@ -1,0 +1,42 @@
+---
+
+- name: Copy main ssg file
+  ansible.builtin.copy:
+    src: "{{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds.xml"
+    dest: /tmp/ssg-{{ ssg_distro }}-ds.xml
+    mode: "0644"
+
+- name: Copy tailoring file from template
+  ansible.builtin.template:
+    src: ssg-{{ ssg_distro }}-ds-tailoring-audit.xml.j2
+    dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+    mode: "0644"
+
+- name: Execute the compliance check
+  ansible.builtin.command:
+    cmd: >-
+      oscap xccdf eval
+      --results /tmp/result.xml
+      --report /tmp/result.html
+      --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+      --profile xccdf_org.ssgproject.content_profile_cis_level1_server_customized
+      /tmp/ssg-{{ ssg_distro }}-ds.xml
+  failed_when: false
+  become: yes
+
+- name: Retrieve audit report
+  ansible.builtin.fetch:
+    src: "/tmp/result.html"
+    dest: "{{ __tempdir.path }}/{{ inventory_hostname }}-xccdf.html"
+    flat: yes
+
+- name: Push results to central server
+  ansible.builtin.copy:
+    src: "{{ __tempdir.path }}/{{ inventory_hostname }}-xccdf.html"
+    # dest: "{{ openscap_central_path }}/{{ inventory_hostname }}"
+    dest: "/data/openscap/hardening/"
+    owner: "{{ openscap_central_user | default(omit) }}"
+    group: "{{ openscap_central_group | default(omit) }}"
+    mode: "{{ openscap_central_mode | default('0640') }}"
+  become: yes
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
