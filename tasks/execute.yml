@@ -59,9 +59,10 @@
       ansible.builtin.file:
         path: "{{ __tempdir.path }}"
         state: absent
-      become: no
       changed_when: false
-
+      become: no
+      run_once: yes
+      delegate_to: localhost
 
 - name: Execute script on host
   block:
@@ -132,6 +133,8 @@
         state: directory
       register: __tempdir
       changed_when: false
+      become: no
+      delegate_to: localhost
 
     - name: Create local path per host
       ansible.builtin.file:
@@ -158,8 +161,7 @@
       loop: "{{ __find.files }}"
       loop_control:
         loop_var: file
-        label:
-          - "{{ file.path }}"
+        label: "{{ file.path }}"
       tags: molecule-idempotence-notest
 
     - name: Push results to central server
