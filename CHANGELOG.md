@@ -1,3 +1,11 @@
+## [1.5.1](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.5.0...v1.5.1) (2024-04-12)
+
+
+### Bug Fixes
+
+* Change loop/label for latest ansible ([41de6b4](https://github.com/de-it-krachten/ansible-role-openscap/commit/41de6b4407ac36d5c17d5ab099de5c5039327a96))
+* Fix 'rmtree' issue ([e04ef7c](https://github.com/de-it-krachten/ansible-role-openscap/commit/e04ef7cf6b741f1de24a53923af98121220d9bd0))
+
 # [1.5.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.4.0...v1.5.0) (2023-09-17)
 
 
