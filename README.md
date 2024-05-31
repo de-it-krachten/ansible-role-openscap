@@ -32,6 +32,7 @@ Supported platforms
 - Debian 12 (Bookworm)
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
+- Ubuntu 24.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -92,11 +93,11 @@ openscap_table_headers:
   - vulnerabilities
 </pre></code>
 
-### defaults/Sles.yml
+### defaults/AlmaLinux.yml
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_distribution_major_version }}.xml
+  https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
 </pre></code>
 
 ### defaults/Debian-12.yml
@@ -110,25 +111,22 @@ openscap_packages:
   - wget
 </pre></code>
 
-### defaults/Rocky.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
-</pre></code>
-
-### defaults/AlmaLinux.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
-</pre></code>
-
 ### defaults/Debian.yml
 <pre><code>
 # OVAL download url
 openscap_url: >-
   https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml.bz2
+</pre></code>
+
+### defaults/family-Debian.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - libopenscap8
+  - bzip2
+  - gpg
+  - wget
 </pre></code>
 
 ### defaults/family-RedHat.yml
@@ -142,20 +140,6 @@ openscap_packages:
   - wget
 </pre></code>
 
-### defaults/RedHat.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
-</pre></code>
-
-### defaults/Ubuntu.yml
-<pre><code>
-# OVAL download url
-openscap_url: >-
-  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
-</pre></code>
-
 ### defaults/OracleLinux.yml
 <pre><code>
 # OVAL download url
@@ -163,15 +147,44 @@ openscap_url: >-
   https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_distribution_major_version }}.xml.bz2
 </pre></code>
 
-### defaults/family-Debian.yml
+### defaults/RedHat.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
+### defaults/Rocky.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
+</pre></code>
+
+### defaults/Sles.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_distribution_major_version }}.xml
+</pre></code>
+
+### defaults/Ubuntu-24.yml
 <pre><code>
 # list of required packages
 openscap_packages:
   # - openscap-daemon
-  - libopenscap8
+  - openscap-common
+  - openscap-utils
   - bzip2
   - gpg
   - wget
+</pre></code>
+
+### defaults/Ubuntu.yml
+<pre><code>
+# OVAL download url
+openscap_url: >-
+  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
 </pre></code>
 
 
