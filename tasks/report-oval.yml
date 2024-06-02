@@ -15,6 +15,7 @@
     - name: Read results
       ansible.builtin.command: >-
         cat "{{ openscap_central_report }}"
+      become: yes
       register: x
       changed_when: false
 

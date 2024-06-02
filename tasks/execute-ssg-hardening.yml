@@ -1,0 +1,41 @@
+---
+
+- name: Copy main ssg file
+  ansible.builtin.copy:
+    src: "{{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds.xml"
+    dest: /tmp/ssg-{{ ssg_distro }}-ds.xml
+    mode: "0644"
+
+- name: Copy tailoring file from template
+  ansible.builtin.template:
+    src: ssg-{{ ssg_distro }}-ds-tailoring-hardening.xml.j2
+    dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-hardening.xml
+    mode: "0644"
+
+# - name: Create ansible fix playbook
+#   ansible.builtin.command:
+#     cmd: >-
+#       oscap xccdf generate fix
+#       --fix-type ansible
+#       --output /tmp/ssg-{{ ssg_distro }}-ds-fix.yml
+#       --profile xccdf_org.ssgproject.content_profile_cis_level1_server
+#       --tailoring-file {{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds-tailoring.xml
+#       {{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds.xml
+
+- name: Create bash fix script w/ tailoring
+  ansible.builtin.command:
+    cmd: >-
+      oscap xccdf generate fix
+      --fix-type bash
+      --output /tmp/ssg-{{ ssg_distro }}-ds-fix.sh
+      --profile xccdf_org.ssgproject.content_profile_cis_level1_server
+      --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-hardening.xml
+      /tmp/ssg-{{ ssg_distro }}-ds.xml
+  changed_when: false
+
+- name: Execute fix script
+  ansible.builtin.shell: |
+    exec >/tmp/ssg-{{ ssg_distro }}-ds-fix.log 2>&1
+    bash /tmp/ssg-{{ ssg_distro }}-ds-fix.sh
+  changed_when: false
+  become: yes
