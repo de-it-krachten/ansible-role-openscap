@@ -13,14 +13,14 @@
     mode: "0644"
 
 - name: Execute the compliance check
-  ansible.builtin.command:
+  ansible.builtin.shell:
     cmd: >-
       oscap xccdf eval
       --results /tmp/result.xml
       --report /tmp/result.html
       --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
       --profile xccdf_org.ssgproject.content_profile_cis_level1_server_customized
-      /tmp/ssg-{{ ssg_distro }}-ds.xml
+      /tmp/ssg-{{ ssg_distro }}-ds.xml >/tmp/ssg.log 2>&1
   changed_when: true
   failed_when: false
   become: yes
