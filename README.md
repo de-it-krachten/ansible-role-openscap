@@ -33,8 +33,6 @@ Supported platforms
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
-- Fedora 39
-- Fedora 40
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -242,6 +240,18 @@ openscap_url: >-
 # OVAL download url
 openscap_url: >-
   https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_distribution_major_version }}.xml
+</pre></code>
+
+### defaults/Ubuntu-24.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - openscap-common
+  - openscap-utils
+  - bzip2
+  - gpg
+  - wget
 </pre></code>
 
 ### defaults/Ubuntu.yml
