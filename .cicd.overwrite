@@ -58,8 +58,11 @@ molecule:
       openscap_central_download: true
       openscap_central_collection: true
       openscap_central_path: /var/log/openscap_central
-      openscap_central_report: /tmp/report.yml
-      openscap_immediate: true
+      openscap_central_mode: "0644"
+      openscap_oval: true
+      openscap_oval_immediate: true
+      openscap_ssg: true
+      openscap_ssg_audit: true
       openscap_schedule_command: "/usr/local/bin/openscap-oval-report.sh -D"
       openscap_gpg_recipient: foo@example.com
       openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"

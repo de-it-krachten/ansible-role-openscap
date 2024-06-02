@@ -51,7 +51,7 @@ openscap_central_report_path: /var/log/openscap_central
 
 # Location where a summary of the results will be written to
 # This can be used to create an HTML report of all hosts
-openscap_central_report: "{{ openscap_central_report_path }}/index.yml"
+openscap_central_report_oval: "{{ openscap_central_report_path }}/index-oval.yml"
 
 # download OVAL files centrally and distribute to nodes
 openscap_central_download: false
@@ -86,8 +86,8 @@ openscap_schedule_times:
   hour: '00'
 
 # OVAL report table
-openscap_table_name: OVAL
-openscap_table_headers:
+openscap_oval_table_name: OVAL
+openscap_oval_table_headers:
   - host
   - os
   - version
@@ -165,6 +165,19 @@ openscap_ssg_tailoring:
         - accounts_umask_etc_profile
         - accounts_umask_etc_bashrc
         - accounts_umask_etc_login_defs
+
+# OVAL report table
+openscap_ssg_table_name: Hardening
+openscap_ssg_table_headers:
+  - host
+  - os
+  - version
+  - date
+  - time
+
+# Location where a summary of the results will be written to
+# This can be used to create an HTML report of all hosts
+openscap_central_report_ssg: "{{ openscap_central_report_path }}/index-ssg.yml"
 </pre></code>
 
 ### defaults/AlmaLinux.yml
@@ -274,8 +287,11 @@ openscap_url: >-
     openscap_central_download: true
     openscap_central_collection: true
     openscap_central_path: /var/log/openscap_central
-    openscap_central_report: /tmp/report.yml
-    openscap_immediate: true
+    openscap_central_mode: 420
+    openscap_oval: true
+    openscap_oval_immediate: true
+    openscap_ssg: true
+    openscap_ssg_audit: true
     openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'

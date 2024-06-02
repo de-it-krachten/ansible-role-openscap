@@ -7,8 +7,11 @@
     openscap_central_download: True
     openscap_central_collection: True
     openscap_central_path: /var/log/openscap_central
-    openscap_central_report: /tmp/report.yml
-    openscap_immediate: True
+    openscap_central_mode: "0644"
+    openscap_oval: True
+    openscap_oval_immediate: True
+    openscap_ssg: True
+    openscap_ssg_audit: True
     openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"

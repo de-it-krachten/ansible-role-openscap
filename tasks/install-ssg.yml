@@ -69,12 +69,6 @@
       vars:
         q1: "[?name=='{{ openscap_ssg_file }}'].browser_download_url"
 
-    - name: Create tempdir on control node
-      ansible.builtin.tempfile:
-        state: directory
-      register: __tempdir
-      changed_when: false
-
     - name: Define ssg path
       ansible.builtin.set_fact:
         openscap_ssg_root_path: "{{ __tempdir.path }}"
