@@ -31,9 +31,11 @@
       --profile xccdf_org.ssgproject.content_profile_cis_level1_server
       --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-hardening.xml
       /tmp/ssg-{{ ssg_distro }}-ds.xml
+  changed_when: false
 
 - name: Execute fix script
   ansible.builtin.shell: |
     exec >/tmp/ssg-{{ ssg_distro }}-ds-fix.log 2>&1
     bash /tmp/ssg-{{ ssg_distro }}-ds-fix.sh
+  changed_when: false
   become: yes

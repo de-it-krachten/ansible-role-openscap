@@ -1,6 +1,6 @@
 ---
 
-- name: Get OS naming
+- name: Get OS naming  # noqa jinja[spacing]
   ansible.builtin.set_fact:
     ssg_distro: >-
       {%- if ansible_distribution == 'Ubuntu' -%}
@@ -18,7 +18,7 @@
   run_once: yes
   block:
 
-    - name: Get latest ssg release info
+    - name: Get latest ssg release info  # noqa jinja[spacing]
       ansible.builtin.uri:
         url: "{{ openscap_ssg_api + '/releases/latest' }}"
         headers: >-
@@ -39,7 +39,7 @@
         openscap_ssg_version: "{{ openscap_ssg_version_latest }}"
       when: openscap_ssg_version == 'latest'
 
-    - name: Get all ssg releases info
+    - name: Get all ssg releases info  # noqa jinja[spacing]
       ansible.builtin.uri:
         url: "{{ openscap_ssg_api + '/releases?per_page=1000' }}"
         headers: >-
@@ -90,6 +90,7 @@
         url: "{{ openscap_ssg_url }}"
         dest: "{{ __tempdir.path }}/{{ openscap_ssg_url | basename }}"
         checksum: "sha512:{{ openscap_ssg_url }}.sha512"
+        mode: "0644"
 
     - name: Extract archive
       ansible.builtin.unarchive:
