@@ -44,6 +44,7 @@
       - opensuse15
 
     systemctl_alternative: False
+    update_all: True
   roles:
     - { role: deitkrachten.facts, when: ansible_os_family != 'Windows' }
     - deitkrachten.showinfo
