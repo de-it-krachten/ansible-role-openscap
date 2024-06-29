@@ -2,6 +2,7 @@
 
 - name: Create HTML report for all hosts
   run_once: yes
+  become: yes
   delegate_to: "{{ openscap_central_server | default('localhost') }}"
   block:
 
@@ -13,9 +14,8 @@
       register: __reports
 
     - name: Read results
-      ansible.builtin.command: >-
-        cat "{{ openscap_central_report }}"
-      become: yes
+      ansible.builtin.command:
+        cmd: cat {{ openscap_central_report }}
       register: x
       changed_when: false
 
@@ -28,4 +28,3 @@
         src: templates/table.html.j2
         dest: "{{ openscap_central_report_path }}/index.html"
         mode: "0644"
-      become: yes

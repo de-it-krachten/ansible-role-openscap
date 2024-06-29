@@ -225,7 +225,7 @@ openscap_url: >-
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
+  https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_distribution_major_version }}/rhel-{{ ansible_distribution_major_version }}.oval.xml.bz2
 </pre></code>
 
 ### defaults/Rocky.yml
@@ -273,12 +273,10 @@ openscap_url: >-
   vars:
     openscap_central_download: true
     openscap_central_collection: true
-    openscap_central_path: /var/log/openscap_central
-    openscap_central_report: /tmp/report.yml
-    openscap_immediate: true
-    openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
-    openscap_gpg_recipient: foo@example.com
-    openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'
+    openscap_central_path: /tmp/report
+    openscap_central_report_path: /tmp/report
+    openscap_central_mode: '0644'
+    openscap_oval_immediate: true
   tasks:
     - name: Include role 'openscap'
       ansible.builtin.include_role:
