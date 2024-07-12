@@ -10,6 +10,7 @@
     openscap_central_report_path: /tmp/report
     openscap_central_mode: "0644"
     openscap_oval_immediate: True
+    openscap_ssg_immediate: True
   tasks:
     - name: Include role 'ansible-role-openscap'
       ansible.builtin.include_role:
