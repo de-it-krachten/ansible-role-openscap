@@ -1,4 +1,4 @@
-[![CI](https://github.com/de-it-krachten/ansible-role-openscap.dev-tmp/workflows/CI/badge.svg?event=push)](https://github.com/de-it-krachten/ansible-role-openscap.dev-tmp/actions?query=workflow%3ACI)
+[![CI](https://github.com/de-it-krachten/ansible-role-openscap/workflows/CI/badge.svg?event=push)](https://github.com/de-it-krachten/ansible-role-openscap/actions?query=workflow%3ACI)
 
 
 # ansible-role-openscap
@@ -306,7 +306,7 @@ openscap_url: >-
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'
   tasks:
-    - name: Include role 'openscap.dev-tmp'
+    - name: Include role 'openscap'
       ansible.builtin.include_role:
-        name: openscap.dev-tmp
+        name: openscap
 </pre></code>
