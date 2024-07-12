@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.5.1...v1.6.0) (2024-07-12)
+
+
+### Bug Fixes
+
+* Update RHEL OVAL location ([f15effb](https://github.com/de-it-krachten/ansible-role-openscap/commit/f15effb0cd96071342c1f3b49ac934fd1ed6160e))
+
+
+### Features
+
+* Add support for OpenSCAP hardening checks ([4b8eae1](https://github.com/de-it-krachten/ansible-role-openscap/commit/4b8eae1ef8a6548e1d5b9d89bf054c2592933c58))
+* Add support for Ubuntu 24.04 LTS + Fedora 40 ([38460f3](https://github.com/de-it-krachten/ansible-role-openscap/commit/38460f35f9155f5940759932b52ab2c9b5793a26))
+* Support Ubuntu 24.04 LTS ([460bb77](https://github.com/de-it-krachten/ansible-role-openscap/commit/460bb77c323592346b773c769a209202a56b24c7))
+
 ## [1.5.1](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.5.0...v1.5.1) (2024-04-12)
 
 
