@@ -10,6 +10,7 @@
         paths: "{{ openscap_central_report_path }}"
         patterns: "oval-report.html"
         recurse: yes
+      become: yes
       register: __reports
 
     - name: Read results

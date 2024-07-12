@@ -29,7 +29,7 @@
 - name: Retrieve audit report
   ansible.builtin.fetch:
     src: "/tmp/result.html"
-    dest: "{{ __tempdir.path }}/{{ inventory_hostname }}-xccdf.html"
+    dest: "/tmp/{{ inventory_hostname }}-xccdf.html"
     flat: yes
 
 - name: Create directory per host
@@ -44,7 +44,7 @@
 
 - name: Push results to central server
   ansible.builtin.copy:
-    src: "{{ __tempdir.path }}/{{ inventory_hostname }}-xccdf.html"
+    src: "/tmp/{{ inventory_hostname }}-xccdf.html"
     dest: "{{ openscap_central_path }}/{{ inventory_hostname }}/xccdf-report.html"
     owner: "{{ openscap_central_user | default(omit) }}"
     group: "{{ openscap_central_group | default(omit) }}"

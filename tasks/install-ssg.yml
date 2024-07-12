@@ -66,24 +66,25 @@
       vars:
         q1: "[?name=='{{ openscap_ssg_file }}'].browser_download_url"
 
-    - name: Define ssg path
-      ansible.builtin.set_fact:
-        openscap_ssg_root_path: "{{ __tempdir.path }}"
-
     - name: Create ssg path
       ansible.builtin.file:
         path: "{{ openscap_ssg_path }}"
         state: directory
         mode: "0755"
+      become: yes
+      tags: molecule-idempotence-notest
 
     - name: Download ssg on control node
       ansible.builtin.get_url:
         url: "{{ openscap_ssg_url }}"
-        dest: "{{ __tempdir.path }}/{{ openscap_ssg_url | basename }}"
+        dest: "/tmp/{{ openscap_ssg_url | basename }}"
         checksum: "sha512:{{ openscap_ssg_url }}.sha512"
         mode: "0644"
+      tags: molecule-idempotence-notest
 
     - name: Extract archive
       ansible.builtin.unarchive:
-        src: "{{ __tempdir.path }}/{{ openscap_ssg_url | basename }}"
+        src: "/tmp/{{ openscap_ssg_url | basename }}"
         dest: "{{ openscap_ssg_root_path }}/"
+      become: yes
+      tags: molecule-idempotence-notest
