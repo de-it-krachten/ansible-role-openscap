@@ -2,10 +2,7 @@
 
 - name: Get OS naming  # noqa jinja[spacing]
   ansible.builtin.set_fact:
-    ssg_distro: >-
-      {%- if ansible_distribution == 'Ubuntu' -%}
-      {{ (ansible_distribution | lower) + (ansible_distribution_version | regex_replace('\.')) }}
-      {%- endif -%}
+    ssg_distro: "{{ openscap_ssg_distros[ansible_distribution] }}"
 
 - name: Fail if not supported
   ansible.builtin.fail:
