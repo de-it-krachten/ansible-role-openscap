@@ -25,6 +25,9 @@ platforms:
   ubuntu1804:
     ci: false
     supported: false
+  ubuntu2404:
+    ci: false
+    supported: false
   opensuse15:
     ci: false
     supported: false
