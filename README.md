@@ -51,7 +51,7 @@ openscap_central_report_path: /var/log/openscap_central
 
 # Location where a summary of the results will be written to
 # This can be used to create an HTML report of all hosts
-openscap_central_report: "{{ openscap_central_report_path }}/index.yml"
+openscap_central_report_oval: "{{ openscap_central_report_path }}/index-oval.yml"
 
 # download OVAL files centrally and distribute to nodes
 openscap_central_download: false
@@ -86,8 +86,8 @@ openscap_schedule_times:
   hour: '00'
 
 # OVAL report table
-openscap_table_name: OVAL
-openscap_table_headers:
+openscap_oval_table_name: OVAL
+openscap_oval_table_headers:
   - host
   - os
   - version
@@ -98,6 +98,16 @@ openscap_table_headers:
 # -------------------------------------------------
 # scap-security-guide / ssg
 # -------------------------------------------------
+
+# Lookup table for ansible distribution and how they are named in SSG
+openscap_ssg_distros:
+  Ubuntu: "ubuntu{{ ansible_distribution_version | regex_replace('\\.') }}"
+  CentOS: "centos{{ ansible_distribution_major_version }}"
+  Debian: "debian{{ ansible_distribution_major_version }}"
+  RedHat: "rhel{{ ansible_distribution_major_version }}"
+  AlmaLinux: "rhel{{ ansible_distribution_major_version }}"
+  Rocky: "rhel{{ ansible_distribution_major_version }}"
+  OracleLinux: "ol{{ ansible_distribution_major_version }}"
 
 # Perform audit
 openscap_ssg_audit: false
@@ -165,6 +175,19 @@ openscap_ssg_tailoring:
         - accounts_umask_etc_profile
         - accounts_umask_etc_bashrc
         - accounts_umask_etc_login_defs
+
+# OVAL report table
+openscap_ssg_table_name: Hardening
+openscap_ssg_table_headers:
+  - host
+  - os
+  - version
+  - date
+  - time
+
+# Location where a summary of the results will be written to
+# This can be used to create an HTML report of all hosts
+openscap_central_report_ssg: "{{ openscap_central_report_path }}/index-ssg.yml"
 </pre></code>
 
 ### defaults/AlmaLinux.yml
@@ -273,11 +296,15 @@ openscap_url: >-
   vars:
     openscap_central_download: true
     openscap_central_collection: true
-    openscap_central_path: /tmp/report
-    openscap_central_report_path: /tmp/report
+    openscap_central_path: /var/log/openscap_central
     openscap_central_mode: '0644'
+    openscap_oval: true
     openscap_oval_immediate: true
-    openscap_ssg_immediate: true
+    openscap_ssg: true
+    openscap_ssg_audit: true
+    openscap_schedule_command: /usr/local/bin/openscap-oval-report.sh -D
+    openscap_gpg_recipient: foo@example.com
+    openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'
   tasks:
     - name: Include role 'openscap'
       ansible.builtin.include_role:

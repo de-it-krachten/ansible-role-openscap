@@ -5,17 +5,17 @@
   delegate_to: "{{ openscap_central_server | default('localhost') }}"
   block:
 
-    - name: Get all OVAL reports
+    - name: Get all SSG reports
       ansible.builtin.find:
         paths: "{{ openscap_central_report_path }}"
-        patterns: "oval-report.html"
+        patterns: "xccdf-report.html"
         recurse: yes
       become: yes
       register: __reports
 
     - name: Read results
       ansible.builtin.command: >-
-        cat "{{ openscap_central_report_oval }}"
+        cat "{{ openscap_central_report_ssg }}"
       become: yes
       register: x
       changed_when: false
@@ -26,7 +26,7 @@
 
     - name: Create HTML report from template
       ansible.builtin.template:
-        src: templates/table-oval.html.j2
-        dest: "{{ openscap_central_report_path }}/index-oval.html"
+        src: templates/table-ssg.html.j2
+        dest: "{{ openscap_central_report_path }}/index-ssg.html"
         mode: "0644"
       become: yes

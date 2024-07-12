@@ -21,10 +21,10 @@ $(document).ready(function () {
   </script>
 </head>
 
-<table id="{{ openscap_table_name }}" class="display">
+<table id="{{ openscap_oval_table_name }}" class="display">
     <thead>
         <tr>
-{% for header in openscap_table_headers %}
+{% for header in openscap_oval_table_headers %}
             <th>{{ header }}</th>
 {% endfor %}
             <th>report</th>
@@ -33,7 +33,7 @@ $(document).ready(function () {
     <tbody>
 {% for entry in openscap_results %}
         <tr>
-{% for header in openscap_table_headers %}
+{% for header in openscap_oval_table_headers %}
             <td>{{ entry[header] }}</td>
 {% endfor %}
             <td><a href="{{ entry.host }}/oval-report.html">link</a></td>
