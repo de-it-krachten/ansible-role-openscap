@@ -3,17 +3,74 @@
 - name: Load variables based on OS type
   ansible.builtin.include_tasks: vars.yml
 
+- name: Show variables
+  ansible.builtin.debug:
+    msg:
+      openscap_oval: "{{ openscap_oval }}"
+      openscap_oval_schedule: "{{ openscap_oval_schedule }}"
+      openscap_oval_immediate: "{{ openscap_oval_immediate }}"
+      openscap_ssg: "{{ openscap_ssg }}"
+      openscap_ssg_hardening: "{{ openscap_ssg_hardening }}"
+      openscap_ssg_audit: "{{ openscap_ssg_audit }}"
+  run_once: yes
+
+- name: Define temporary file location on control node
+  ansible.builtin.tempfile:
+    state: directory
+  register: __tempdir
+  changed_when: false
+  run_once: yes
+  become: no
+  delegate_to: localhost
+
 - name: Perform installation
   ansible.builtin.include_tasks: install.yml
 
-- name: Schedule OVAL report
-  ansible.builtin.include_tasks: schedule.yml
-  when: openscap_schedule | bool
+# OVAL
+- name: OVAL
+  when: openscap_oval | bool
+  block:
 
-- name: Execute and retrieve output
-  ansible.builtin.include_tasks: execute.yml
-  when: openscap_immediate | bool
+    - name: Install OVAL support
+      ansible.builtin.include_tasks: install-oval.yml
 
-- name: Execute and retrieve output
-  ansible.builtin.include_tasks: report.yml
-  when: openscap_central_collection | bool
+    - name: Schedule OVAL report
+      ansible.builtin.include_tasks: schedule-oval.yml
+      when: openscap_oval_schedule | bool
+
+    - name: Execute and retrieve output
+      ansible.builtin.include_tasks: execute-oval.yml
+      when: openscap_oval_immediate | bool
+
+    - name: Execute and retrieve output
+      ansible.builtin.include_tasks: report-oval.yml
+      when: openscap_central_collection | bool
+
+# Hardening
+- name: Hardening
+  when: openscap_ssg | bool
+  block:
+
+    - name: Install scap-security-guide
+      ansible.builtin.include_tasks: install-ssg.yml
+
+    - name: Execute hardening
+      ansible.builtin.include_tasks: execute-ssg-hardening.yml
+      when: openscap_ssg_hardening | bool
+
+    - name: Execute hardening audit
+      ansible.builtin.include_tasks: execute-ssg-audit.yml
+      when: openscap_ssg_audit | bool
+
+    - name: Execute and retrieve output
+      ansible.builtin.include_tasks: report-ssg.yml
+      when: openscap_central_collection | bool
+
+- name: Delete temporary files
+  ansible.builtin.file:
+    path: "{{ __tempdir.path }}"
+    state: absent
+  changed_when: false
+  run_once: yes
+  become: no
+  delegate_to: localhost

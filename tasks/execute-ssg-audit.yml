@@ -1,0 +1,67 @@
+---
+
+- name: Copy main ssg file
+  ansible.builtin.copy:
+    src: "{{ openscap_ssg_path }}/ssg-{{ ssg_distro }}-ds.xml"
+    dest: /tmp/ssg-{{ ssg_distro }}-ds.xml
+    mode: "0644"
+
+- name: Copy tailoring file from template
+  ansible.builtin.template:
+    src: ssg-ds-tailoring-audit.xml.j2
+    dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+    mode: "0644"
+
+- name: Execute the compliance check
+  ansible.builtin.shell:
+    cmd: >-
+      oscap xccdf eval
+      --results /tmp/result.xml
+      --report /tmp/result.html
+      --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
+      --profile xccdf_org.ssgproject.content_profile_cis_level1_server_customized
+      /tmp/ssg-{{ ssg_distro }}-ds.xml >/tmp/ssg.log 2>&1
+  changed_when: true
+  failed_when: false
+  become: yes
+  tags: molecule-idempotence-notest
+
+- name: Retrieve audit report
+  ansible.builtin.fetch:
+    src: "/tmp/result.html"
+    dest: "/tmp/{{ inventory_hostname }}-xccdf.html"
+    flat: yes
+
+- name: Create directory per host
+  ansible.builtin.file:
+    path: "{{ openscap_central_path }}/{{ inventory_hostname }}"
+    state: directory
+    owner: "{{ openscap_central_user | default(omit) }}"
+    group: "{{ openscap_central_group | default(omit) }}"
+    mode: "0750"
+  become: yes
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+
+- name: Push results to central server
+  ansible.builtin.copy:
+    src: "/tmp/{{ inventory_hostname }}-xccdf.html"
+    dest: "{{ openscap_central_path }}/{{ inventory_hostname }}/xccdf-report.html"
+    owner: "{{ openscap_central_user | default(omit) }}"
+    group: "{{ openscap_central_group | default(omit) }}"
+    mode: "{{ openscap_central_mode | default('0640') }}"
+  become: yes
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+
+- name: Write each host with specifics to yaml file as input for the report
+  ansible.builtin.lineinfile:
+    path: "{{ openscap_central_report_ssg }}"
+    # line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
+    line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
+    regex: "^- { host: '{{ inventory_hostname }}',.*"
+    create: yes
+    mode: "0644"
+  become: yes
+  throttle: 1
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  when: openscap_central_report_oval is defined
+  tags: molecule-idempotence-notest

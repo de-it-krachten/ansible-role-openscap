@@ -26,15 +26,6 @@
       ansible.builtin.set_fact:
         oval_urls: "{{ lookup('file', __tempfile.path) | from_yaml | unique }}"
 
-    - name: Create temporary directory
-      ansible.builtin.tempfile:
-        state: directory
-      changed_when: false
-      become: no
-      register: __tempdir
-      run_once: yes
-      delegate_to: localhost
-
     - name: Download all OVAL files
       ansible.builtin.get_url:
         url: "{{ item }}"
@@ -54,15 +45,6 @@
         mode: "0600"
       become: yes
       changed_when: false
-
-    - name: Delete temporary directory
-      ansible.builtin.file:
-        path: "{{ __tempdir.path }}"
-        state: absent
-      changed_when: false
-      become: no
-      run_once: yes
-      delegate_to: localhost
 
 - name: Execute script on host
   block:
@@ -112,7 +94,7 @@
 
     - name: Write each host with specifics to yaml file as input for the report
       ansible.builtin.lineinfile:
-        path: "{{ openscap_central_report }}"
+        path: "{{ openscap_central_report_oval }}"
         line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
         regex: "^- { host: '{{ inventory_hostname }}',.*"
         create: yes
@@ -120,21 +102,13 @@
       become: yes
       throttle: 1
       delegate_to: "{{ openscap_central_server | default('localhost') }}"
-      when: openscap_central_report is defined
+      when: openscap_central_report_oval is defined
       tags: molecule-idempotence-notest
 
 
 - name: Retrieve central collection
   when: openscap_central_collection | bool
   block:
-
-    - name: Define temporary file location on control node
-      ansible.builtin.tempfile:
-        state: directory
-      register: __tempdir
-      changed_when: false
-      become: no
-      delegate_to: localhost
 
     - name: Create local path per host
       ansible.builtin.file:
@@ -173,12 +147,3 @@
         mode: "{{ openscap_central_mode | default('0640') }}"
       become: yes
       delegate_to: "{{ openscap_central_server | default('localhost') }}"
-
-    - name: Delete temporary files
-      ansible.builtin.file:
-        path: "{{ __tempdir.path }}"
-        state: absent
-      changed_when: false
-      run_once: yes
-      become: yes
-      delegate_to: localhost

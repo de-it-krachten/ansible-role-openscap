@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <title>Hardening reports</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <style type="text/css" class="init">
+  </style>
+
+  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" class="init">
+
+
+$(document).ready(function () {
+  $('#OVAL').DataTable();
+});
+
+
+  </script>
+</head>
+
+<table id="{{ openscap_ssg_table_name }}" class="display">
+    <thead>
+        <tr>
+{% for header in openscap_ssg_table_headers %}
+            <th>{{ header }}</th>
+{% endfor %}
+            <th>report</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for entry in openscap_results %}
+        <tr>
+{% for header in openscap_ssg_table_headers %}
+            <td>{{ entry[header] }}</td>
+{% endfor %}
+            <td><a href="{{ entry.host }}/xccdf-report.html">link</a></td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
