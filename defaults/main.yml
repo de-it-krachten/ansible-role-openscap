@@ -59,6 +59,16 @@ openscap_oval_table_headers:
 # scap-security-guide / ssg
 # -------------------------------------------------
 
+# Lookup table for ansible distribution and how they are named in SSG
+openscap_ssg_distros:
+  Ubuntu: "ubuntu{{ ansible_distribution_version | regex_replace('\\.') }}"
+  CentOS: "centos{{ ansible_distribution_major_version }}"
+  Debian: "debian{{ ansible_distribution_major_version }}"
+  RedHat: "rhel{{ ansible_distribution_major_version }}"
+  AlmaLinux: "rhel{{ ansible_distribution_major_version }}"
+  Rocky: "rhel{{ ansible_distribution_major_version }}"
+  OracleLinux: "ol{{ ansible_distribution_major_version }}"
+
 # Perform audit
 openscap_ssg_audit: false
 

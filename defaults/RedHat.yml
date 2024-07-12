@@ -2,4 +2,4 @@
 
 # OVAL download url
 openscap_url: >-
-  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
+  https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_distribution_major_version }}/rhel-{{ ansible_distribution_major_version }}.oval.xml.bz2

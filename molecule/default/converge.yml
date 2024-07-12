@@ -16,6 +16,6 @@
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: "{{ lookup('file', 'files/foo.pub') }}"
   tasks:
-    - name: Include role 'ansible-role-openscap'
+    - name: Include role 'ansible-role-openscap.dev-tmp'
       ansible.builtin.include_role:
-        name: ansible-role-openscap
+        name: ansible-role-openscap.dev-tmp

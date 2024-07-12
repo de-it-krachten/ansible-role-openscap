@@ -8,7 +8,7 @@
 
 - name: Copy tailoring file from template
   ansible.builtin.template:
-    src: ssg-{{ ssg_distro }}-ds-tailoring-audit.xml.j2
+    src: ssg-ds-tailoring-audit.xml.j2
     dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
     mode: "0644"
 
@@ -24,12 +24,23 @@
   changed_when: true
   failed_when: false
   become: yes
+  tags: molecule-idempotence-notest
 
 - name: Retrieve audit report
   ansible.builtin.fetch:
     src: "/tmp/result.html"
     dest: "{{ __tempdir.path }}/{{ inventory_hostname }}-xccdf.html"
     flat: yes
+
+- name: Create directory per host
+  ansible.builtin.file:
+    path: "{{ openscap_central_path }}/{{ inventory_hostname }}"
+    state: directory
+    owner: "{{ openscap_central_user | default(omit) }}"
+    group: "{{ openscap_central_group | default(omit) }}"
+    mode: "0750"
+  become: yes
+  delegate_to: "{{ openscap_central_server | default('localhost') }}"
 
 - name: Push results to central server
   ansible.builtin.copy:

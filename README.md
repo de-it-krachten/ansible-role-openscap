@@ -1,4 +1,4 @@
-[![CI](https://github.com/de-it-krachten/ansible-role-openscap/workflows/CI/badge.svg?event=push)](https://github.com/de-it-krachten/ansible-role-openscap/actions?query=workflow%3ACI)
+[![CI](https://github.com/de-it-krachten/ansible-role-openscap.dev-tmp/workflows/CI/badge.svg?event=push)](https://github.com/de-it-krachten/ansible-role-openscap.dev-tmp/actions?query=workflow%3ACI)
 
 
 # ansible-role-openscap
@@ -98,6 +98,16 @@ openscap_oval_table_headers:
 # -------------------------------------------------
 # scap-security-guide / ssg
 # -------------------------------------------------
+
+# Lookup table for ansible distribution and how they are named in SSG
+openscap_ssg_distros:
+  Ubuntu: "ubuntu{{ ansible_distribution_version | regex_replace('\\.') }}"
+  CentOS: "centos{{ ansible_distribution_major_version }}"
+  Debian: "debian{{ ansible_distribution_major_version }}"
+  RedHat: "rhel{{ ansible_distribution_major_version }}"
+  AlmaLinux: "rhel{{ ansible_distribution_major_version }}"
+  Rocky: "rhel{{ ansible_distribution_major_version }}"
+  OracleLinux: "ol{{ ansible_distribution_major_version }}"
 
 # Perform audit
 openscap_ssg_audit: false
@@ -238,7 +248,7 @@ openscap_url: >-
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL{{ ansible_distribution_major_version }}.xml.bz2
+  https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_distribution_major_version }}/rhel-{{ ansible_distribution_major_version }}.oval.xml.bz2
 </pre></code>
 
 ### defaults/Rocky.yml
@@ -287,7 +297,7 @@ openscap_url: >-
     openscap_central_download: true
     openscap_central_collection: true
     openscap_central_path: /var/log/openscap_central
-    openscap_central_mode: 420
+    openscap_central_mode: '0644'
     openscap_oval: true
     openscap_oval_immediate: true
     openscap_ssg: true
@@ -296,7 +306,7 @@ openscap_url: >-
     openscap_gpg_recipient: foo@example.com
     openscap_gpg_key: '{{ lookup(''file'', ''files/foo.pub'') }}'
   tasks:
-    - name: Include role 'openscap'
+    - name: Include role 'openscap.dev-tmp'
       ansible.builtin.include_role:
-        name: openscap
+        name: openscap.dev-tmp
 </pre></code>
