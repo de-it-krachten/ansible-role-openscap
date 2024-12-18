@@ -19,9 +19,9 @@
       --results /tmp/result.xml
       --report /tmp/result.html
       --profile {{ openscap_hardening_profile }}
-      {%- if openscap_hardening_tailorfile | default('') | length > 0 -%}
+      {% if openscap_hardening_tailorfile | default('') | length > 0 %}
       --tailoring-file {{ openscap_hardening_tailorfile }}
-      {%- endif -%}
+      {% endif %}
       /tmp/ssg-{{ ssg_distro }}-ds.xml >/tmp/ssg.log 2>&1
 
 - name: Execute the compliance check
