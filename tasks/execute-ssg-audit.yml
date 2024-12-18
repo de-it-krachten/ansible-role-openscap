@@ -12,6 +12,18 @@
     dest: /tmp/ssg-{{ ssg_distro }}-ds-tailoring-audit.xml
     mode: "0644"
 
+- name: Show command to execute
+  ansible.builtin.debug:
+    msg: >-
+      oscap xccdf eval
+      --results /tmp/result.xml
+      --report /tmp/result.html
+      --profile {{ openscap_hardening_profile }}
+      {%- if openscap_hardening_tailorfile | default('') | length > 0 -%}
+      --tailoring-file {{ openscap_hardening_tailorfile }}
+      {%- endif -%}
+      /tmp/ssg-{{ ssg_distro }}-ds.xml >/tmp/ssg.log 2>&1
+
 - name: Execute the compliance check
   ansible.builtin.shell:
     cmd: >-
