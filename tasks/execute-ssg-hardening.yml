@@ -28,8 +28,10 @@
       oscap xccdf generate fix
       --fix-type bash
       --output /tmp/ssg-{{ ssg_distro }}-ds-fix.sh
-      --profile xccdf_org.ssgproject.content_profile_cis_level1_server
-      --tailoring-file /tmp/ssg-{{ ssg_distro }}-ds-tailoring-hardening.xml
+      --profile {{ openscap_hardening_profile }}
+      {%- if openscap_hardening_tailorfile | default('') | length > 0 -%}
+      --tailoring-file {{ openscap_hardening_tailorfile }}
+      {%- endif -%}
       /tmp/ssg-{{ ssg_distro }}-ds.xml
   changed_when: false
 

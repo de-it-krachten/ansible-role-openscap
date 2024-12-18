@@ -3,3 +3,9 @@
 # OVAL download url
 openscap_url: >-
   https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_distribution_major_version }}/rhel-{{ ansible_distribution_major_version }}.oval.xml.bz2
+
+# Hardening profile:
+openscap_hardening_profile: xccdf_org.ssgproject.content_profile_cis_server_l1
+
+# Hardening tailoring
+openscap_hardening_tailorfile: ''
