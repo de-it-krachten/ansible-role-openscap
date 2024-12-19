@@ -2,7 +2,8 @@
 
 - name: Create HTML report for all hosts
   run_once: yes
-  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  become: "{{ 'no' if openscap_central_server == 'localhost' else 'yes' }}"
+  delegate_to: "{{ openscap_central_server }}"
   block:
 
     - name: Get all SSG reports
@@ -10,13 +11,11 @@
         paths: "{{ openscap_central_report_path }}"
         patterns: "xccdf-report.html"
         recurse: yes
-      become: yes
       register: __reports
 
     - name: Read results
       ansible.builtin.command: >-
         cat "{{ openscap_central_report_ssg }}"
-      become: yes
       register: x
       changed_when: false
 
@@ -29,4 +28,3 @@
         src: templates/table-ssg.html.j2
         dest: "{{ openscap_central_report_path }}/index-ssg.html"
         mode: "0644"
-      become: yes

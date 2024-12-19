@@ -53,8 +53,8 @@
     owner: "{{ openscap_central_user | default(omit) }}"
     group: "{{ openscap_central_group | default(omit) }}"
     mode: "0750"
-  become: yes
-  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  become: "{{ 'no' if openscap_central_server == 'localhost' else 'yes' }}"
+  delegate_to: "{{ openscap_central_server }}"
 
 - name: Push results to central server
   ansible.builtin.copy:
@@ -63,8 +63,8 @@
     owner: "{{ openscap_central_user | default(omit) }}"
     group: "{{ openscap_central_group | default(omit) }}"
     mode: "{{ openscap_central_mode | default('0640') }}"
-  become: yes
-  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  become: "{{ 'no' if openscap_central_server == 'localhost' else 'yes' }}"
+  delegate_to: "{{ openscap_central_server }}"
 
 - name: Write each host with specifics to yaml file as input for the report
   ansible.builtin.lineinfile:
@@ -74,8 +74,8 @@
     regex: "^- { host: '{{ inventory_hostname }}',.*"
     create: yes
     mode: "0644"
-  become: yes
+  become: "{{ 'no' if openscap_central_server == 'localhost' else 'yes' }}"
   throttle: 1
-  delegate_to: "{{ openscap_central_server | default('localhost') }}"
+  delegate_to: "{{ openscap_central_server }}"
   when: openscap_central_report_oval is defined
   tags: molecule-idempotence-notest

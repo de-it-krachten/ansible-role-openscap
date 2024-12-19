@@ -145,6 +145,9 @@ openscap_ssg_table_headers:
   - date
   - time
 
+# Server to write reports to
+openscap_central_server: localhost
+
 # Location where a summary of the results will be written to
 # This can be used to create an HTML report of all hosts
 openscap_central_report_ssg: "{{ openscap_central_report_path }}/index-ssg.yml"
