@@ -50,9 +50,9 @@
 
     - name: Get version information
       ansible.builtin.set_fact:
-        openscap_ssg_version_info: "{{ openscap_ssg_version_info.json | json_query(query) | first }}"
+        openscap_ssg_version_info: "{{ openscap_ssg_version_info.json | json_query(qq) | first }}"
       vars:
-        query: "[?tag_name=='{{ openscap_ssg_version }}']"
+        qq: "[?tag_name=='{{ openscap_ssg_version }}']"
 
     - name: Show ssg release
       ansible.builtin.debug:

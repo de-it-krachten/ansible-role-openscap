@@ -10,22 +10,16 @@ generic:
 
 # Supported platforms
 platforms:
-  centos7:
-    ci: false
-    supported: false
-  oraclelinux8:
-    ci: false
-    supported: true
-  debian10:
+  rockylinux10:
     ci: false
     supported: false
   debian11:
     ci: false
     supported: false
-  ubuntu1804:
+  debian12:
     ci: false
     supported: false
-  ubuntu2404:
+  debian13:
     ci: false
     supported: false
   opensuse15:
@@ -34,10 +28,10 @@ platforms:
   sles15:
     ci: false
     supported: true
-  fedora39:
+  fedora41:
     ci: false
     supported: false
-  fedora40:
+  fedora42:
     ci: false
     supported: false
   alpine3:
