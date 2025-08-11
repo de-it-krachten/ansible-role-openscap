@@ -1,3 +1,12 @@
+# [1.7.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.6.0...v1.7.0) (2025-08-11)
+
+
+### Features
+
+* Add support for AlmaLinux 10 ([89d4c40](https://github.com/de-it-krachten/ansible-role-openscap/commit/89d4c40f1ef0f12f569da2067255d9c5bb398b8c))
+* Add support for OracleLinux 10 ([2044e03](https://github.com/de-it-krachten/ansible-role-openscap/commit/2044e03270235e974036e608dcb96d2ae3a0b35b))
+* Add support for Red Hat Enterprise Linux 10 ([855fc7d](https://github.com/de-it-krachten/ansible-role-openscap/commit/855fc7dbf756993b70b625668fca8a54e7af704d))
+
 # [1.6.0](https://github.com/de-it-krachten/ansible-role-openscap/compare/v1.5.1...v1.6.0) (2024-07-12)
 
 
