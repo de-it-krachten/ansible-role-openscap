@@ -31,11 +31,13 @@ Supported platforms
 - AlmaLinux 9
 - AlmaLinux 10
 - SUSE Linux Enterprise 15<sup>1</sup>
+- SUSE Linux Enterprise 16<sup>1</sup>
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
+
 
 ## Role Variables
 ### defaults/main.yml
@@ -294,6 +296,7 @@ openscap_url: >-
   hosts: all
   become: 'False'
   vars:
+    molecule_driver: '{{ lookup(''env'', ''MOLECULE_DRIVER_NAME'') }}'
     openscap_central_download: true
     openscap_central_collection: true
     openscap_central_path: /var/log/openscap_central
