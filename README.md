@@ -32,6 +32,8 @@ Supported platforms
 - AlmaLinux 10
 - SUSE Linux Enterprise 15<sup>1</sup>
 - SUSE Linux Enterprise 16<sup>1</sup>
+- openSUSE Leap 15
+- openSUSE Leap 16
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
 
