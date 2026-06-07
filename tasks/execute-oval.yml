@@ -95,7 +95,7 @@
     - name: Write each host with specifics to yaml file as input for the report
       ansible.builtin.lineinfile:
         path: "{{ openscap_central_report_oval }}"
-        line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_distribution }}', version: {{ ansible_distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
+        line: "- { host: '{{ inventory_hostname }}', os: '{{ ansible_facts.distribution }}', version: {{ ansible_facts.distribution_version }}, vulnerabilities: {{ __vulnerabilities.stdout }}, date: '{{ ansible_date_time.date }}', time: '{{ ansible_date_time.time }}' }"
         regex: "^- { host: '{{ inventory_hostname }}',.*"
         create: yes
         mode: "0644"
