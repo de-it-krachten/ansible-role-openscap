@@ -2,11 +2,11 @@
 
 - name: Get OS naming  # noqa jinja[spacing]
   ansible.builtin.set_fact:
-    ssg_distro: "{{ openscap_ssg_distros[ansible_distribution] }}"
+    ssg_distro: "{{ openscap_ssg_distros[ansible_facts.distribution] }}"
 
 - name: Fail if not supported
   ansible.builtin.fail:
-    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} is unsupported"
+    msg: "{{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }} is unsupported"
   when: ssg_distro is undefined or ssg_distro | length == 0
 
 - name: Install SSG code on control node

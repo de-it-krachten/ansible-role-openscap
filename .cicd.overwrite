@@ -11,32 +11,23 @@ generic:
 # Supported platforms
 platforms:
   rockylinux10:
-    ci: false
     supported: false
+    ci: false
   debian11:
-    ci: false
     supported: false
+    ci: false
   debian12:
-    ci: false
     supported: false
+    ci: false
   debian13:
-    ci: false
     supported: false
-  opensuse15:
     ci: false
+  fedora43:
     supported: false
-  sles15:
     ci: false
-    supported: true
-  fedora41:
-    ci: false
+  fedora44:
     supported: false
-  fedora42:
     ci: false
-    supported: false
-  alpine3:
-    ci: false
-    supported: false
 
 # Dependencies
 dependencies:
