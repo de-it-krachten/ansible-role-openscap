@@ -3,6 +3,12 @@
 - name: Load variables based on OS type
   ansible.builtin.include_tasks: vars.yml
 
+- name: Define variables to make code better readable
+  ansible.builtin.set_fact:
+    openscap_archive: "{{ openscap_tmp_dir }}/{{ openscap_url | basename }}"
+    openscap_file: "{{ openscap_tmp_dir }}/{{ openscap_url | basename | regex_replace('\\.bz2') }}"
+    openscap_report: "{{ openscap_log_dir }}/oval-report.html"
+
 - name: Show variables
   ansible.builtin.debug:
     msg:

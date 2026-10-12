@@ -30,12 +30,13 @@ Supported platforms
 - AlmaLinux 8
 - AlmaLinux 9
 - AlmaLinux 10
-- SUSE Linux Enterprise 15<sup>1</sup>
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
+- Ubuntu 26.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
+
 
 ## Role Variables
 ### defaults/main.yml
@@ -101,13 +102,13 @@ openscap_oval_table_headers:
 
 # Lookup table for ansible distribution and how they are named in SSG
 openscap_ssg_distros:
-  Ubuntu: "ubuntu{{ ansible_distribution_version | regex_replace('\\.') }}"
-  CentOS: "centos{{ ansible_distribution_major_version }}"
-  Debian: "debian{{ ansible_distribution_major_version }}"
-  RedHat: "rhel{{ ansible_distribution_major_version }}"
-  AlmaLinux: "rhel{{ ansible_distribution_major_version }}"
-  Rocky: "rhel{{ ansible_distribution_major_version }}"
-  OracleLinux: "ol{{ ansible_distribution_major_version }}"
+  Ubuntu: "ubuntu{{ ansible_facts.distribution_version | regex_replace('\\.') }}"
+  CentOS: "centos{{ ansible_facts.distribution_major_version }}"
+  Debian: "debian{{ ansible_facts.distribution_major_version }}"
+  RedHat: "rhel{{ ansible_facts.distribution_major_version }}"
+  AlmaLinux: "rhel{{ ansible_facts.distribution_major_version }}"
+  Rocky: "rhel{{ ansible_facts.distribution_major_version }}"
+  OracleLinux: "ol{{ ansible_facts.distribution_major_version }}"
 
 # Perform audit
 openscap_ssg_audit: false
@@ -194,7 +195,7 @@ openscap_central_report_ssg: "{{ openscap_central_report_path }}/index-ssg.yml"
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_distribution_major_version }}.xml.bz2
+  https://security.almalinux.org/oval/org.almalinux.alsa-{{ ansible_facts.distribution_major_version }}.xml.bz2
 </pre></code>
 
 ### defaults/Debian-12.yml
@@ -212,7 +213,7 @@ openscap_packages:
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://www.debian.org/security/oval/oval-definitions-{{ ansible_distribution_release }}.xml.bz2
+  https://www.debian.org/security/oval/oval-definitions-{{ ansible_facts.distribution_release }}.xml.bz2
 </pre></code>
 
 ### defaults/family-Debian.yml
@@ -241,28 +242,28 @@ openscap_packages:
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_distribution_major_version }}.xml.bz2
+  https://linux.oracle.com/security/oval/com.oracle.elsa-ol{{ ansible_facts.distribution_major_version }}.xml.bz2
 </pre></code>
 
 ### defaults/RedHat.yml
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_distribution_major_version }}/rhel-{{ ansible_distribution_major_version }}.oval.xml.bz2
+  https://www.redhat.com/security/data/oval/v2/RHEL{{ ansible_facts.distribution_major_version }}/rhel-{{ ansible_facts.distribution_major_version }}.oval.xml.bz2
 </pre></code>
 
 ### defaults/Rocky.yml
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
+  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_facts.distribution_major_version }}.xml.bz2
 </pre></code>
 
 ### defaults/Sles.yml
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_distribution_major_version }}.xml
+  https://support.novell.com/security/oval/suse.linux.enterprise.server.{{ ansible_facts.distribution_major_version }}.xml
 </pre></code>
 
 ### defaults/Ubuntu-24.yml
@@ -281,7 +282,7 @@ openscap_packages:
 <pre><code>
 # OVAL download url
 openscap_url: >-
-  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
+  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_facts.distribution_release }}.usn.oval.xml.bz2
 </pre></code>
 
 
@@ -294,6 +295,7 @@ openscap_url: >-
   hosts: all
   become: 'False'
   vars:
+    molecule_driver: '{{ lookup(''env'', ''MOLECULE_DRIVER_NAME'') }}'
     openscap_central_download: true
     openscap_central_collection: true
     openscap_central_path: /var/log/openscap_central
