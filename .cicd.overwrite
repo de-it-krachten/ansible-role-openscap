@@ -13,9 +13,6 @@ platforms:
   rockylinux10:
     supported: false
     ci: false
-  debian11:
-    supported: false
-    ci: false
   debian12:
     supported: false
     ci: false
