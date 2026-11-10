@@ -278,6 +278,18 @@ openscap_packages:
   - wget
 </pre></code>
 
+### defaults/Ubuntu-26.yml
+<pre><code>
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - openscap-common
+  - openscap-utils
+  - bzip2
+  - gpg
+  - wget
+</pre></code>
+
 ### defaults/Ubuntu.yml
 <pre><code>
 # OVAL download url
