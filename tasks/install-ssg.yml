@@ -9,6 +9,10 @@
     msg: "{{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }} is unsupported"
   when: ssg_distro is undefined or ssg_distro | length == 0
 
+- name: Set github_token
+  ansible.builtin.set_fact:
+    github_token: "{{ lookup('env', 'GH_TOKEN') }}"
+
 - name: Install SSG code on control node
   become: no
   delegate_to: localhost
