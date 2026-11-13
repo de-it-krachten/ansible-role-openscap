@@ -75,7 +75,7 @@
 
     - name: Execute script
       ansible.builtin.command:
-        cmd: "{{ openscap_schedule_command }}"
+        cmd: "{{ openscap_schedule_command }} --skip-validation"
       become: yes
       changed_when: true
       tags: molecule-idempotence-notest
