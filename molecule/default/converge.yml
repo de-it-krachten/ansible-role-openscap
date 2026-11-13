@@ -4,6 +4,7 @@
   hosts: all
   become: "False"
   vars:
+    molecule_driver: "{{ lookup('env', 'MOLECULE_DRIVER_NAME') }}"
     openscap_central_download: True
     openscap_central_collection: True
     openscap_central_path: /var/log/openscap_central

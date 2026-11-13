@@ -96,12 +96,17 @@ Usage : $BASENAME <flags> <arguments>
 
 Flags :
 
-   -d|--debug    : Debug mode (set -x)
-   -D|--dry-run  : Dry run mode
-   -h|--help     : Prints this help message
-   -v|--verbose  : Verbose output
+   -d|--debug           : Debug mode (set -x)
+   -h|--help            : Prints this help message
+   -v|--verbose         : Verbose output
 
-   -i|--insecure : Disable SSL/TLS verification
+   -D|--no-download     : Do not download the OVAL definition file
+   -i|--insecure        : Disable SSL/TLS verification
+   -m|--maxtime <sec>   : Maximum amount of seconds for report to run before killing it
+   -s|--skip-validation : Skip OVAL validation
+   -t|--transfer        : Transfer results to central server
+   -x|--extra           : Add extra info
+
 
 EOF
 
@@ -119,7 +124,7 @@ function Wait4proc
 
     local Pid=$1
     local Counter=0
-    local Maxcounter=300
+    local Maxcounter=$Maxtime
     local Step=10
 
     while [[ $Counter -ne $Maxcounter ]]
@@ -166,17 +171,20 @@ function Extract
 function Report
 {
 
+  [[ $Validation == false ]] && Args="--skip-validation"
   if [[ $Debug == true ]]
   then
     # Execute OpenSCAP
     oscap oval eval --verbose DEVEL \
                     --results ${openscap_results} \
                     --report ${openscap_report} \
+                    $Args \
                     ${openscap_file} || exit 1
   else
     # Execute OpenSCAP
     oscap oval eval --results ${openscap_results} \
                     --report ${openscap_report} \
+                    $Args \
                     ${openscap_file} > /dev/null &
     Wait4proc $! || exit 1
   fi
@@ -239,9 +247,11 @@ Verbose=false
 Extra_info=false
 Insecure=false
 Download=true
+Maxtime=300
+Validation=true
 
 # parse command line into arguments and check results of parsing
-while getopts :dDihtvx-: OPT
+while getopts :dDihm:tvx-: OPT
 do
 
   # Support long options
@@ -266,6 +276,12 @@ do
       ;;
     i|insecure)
       Insecure=true
+      ;;
+    m|maxtime)
+      Maxtime=$OPTARG
+      ;;
+    s|skip-validation)
+      Validation=false
       ;;
     t|transfer)
       Transfer=true

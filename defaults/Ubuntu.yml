@@ -2,4 +2,4 @@
 
 # OVAL download url
 openscap_url: >-
-  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_distribution_release }}.usn.oval.xml.bz2
+  https://security-metadata.canonical.com/oval/com.ubuntu.{{ ansible_facts.distribution_release }}.usn.oval.xml.bz2
