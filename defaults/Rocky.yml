@@ -2,4 +2,4 @@
 
 # OVAL download url
 openscap_url: >-
-  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_distribution_major_version }}.xml.bz2
+  https://dl.rockylinux.org/pub/oval/org.rockylinux.rlsa-{{ ansible_facts.distribution_major_version }}.xml.bz2

@@ -1,0 +1,11 @@
+---
+
+# list of required packages
+openscap_packages:
+  # - openscap-daemon
+  - openscap-common
+  - openscap-utils
+  - bzip2
+  - gpg
+  - wget
+

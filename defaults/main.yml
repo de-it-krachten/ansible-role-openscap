@@ -30,6 +30,9 @@ openscap_log_dir: /var/log/openscap
 # Should report be created immediately
 openscap_oval_immediate: false
 
+# Skip OVAL definition validation
+openscap_oval_skip_validation: false
+
 # Should daily report script be installed
 openscap_oval_schedule: false
 
@@ -61,13 +64,13 @@ openscap_oval_table_headers:
 
 # Lookup table for ansible distribution and how they are named in SSG
 openscap_ssg_distros:
-  Ubuntu: "ubuntu{{ ansible_distribution_version | regex_replace('\\.') }}"
-  CentOS: "centos{{ ansible_distribution_major_version }}"
-  Debian: "debian{{ ansible_distribution_major_version }}"
-  RedHat: "rhel{{ ansible_distribution_major_version }}"
-  AlmaLinux: "rhel{{ ansible_distribution_major_version }}"
-  Rocky: "rhel{{ ansible_distribution_major_version }}"
-  OracleLinux: "ol{{ ansible_distribution_major_version }}"
+  Ubuntu: "ubuntu{{ ansible_facts.distribution_version | regex_replace('\\.') }}"
+  CentOS: "centos{{ ansible_facts.distribution_major_version }}"
+  Debian: "debian{{ ansible_facts.distribution_major_version }}"
+  RedHat: "rhel{{ ansible_facts.distribution_major_version }}"
+  AlmaLinux: "rhel{{ ansible_facts.distribution_major_version }}"
+  Rocky: "rhel{{ ansible_facts.distribution_major_version }}"
+  OracleLinux: "ol{{ ansible_facts.distribution_major_version }}"
 
 # Perform audit
 openscap_ssg_audit: false
