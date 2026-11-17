@@ -171,6 +171,7 @@ function Extract
 function Report
 {
 
+  Args=
   [[ $Validation == false ]] && Args="--skip-validation"
   if [[ $Debug == true ]]
   then
@@ -297,9 +298,6 @@ do
       exit 1
       ;;
   esac
-
-  # Set flag to be use by Test_flag
-  eval ${OPT}flag=1
 
 done
 shift $(($OPTIND -1))
