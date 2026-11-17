@@ -30,6 +30,9 @@ openscap_log_dir: /var/log/openscap
 # Should report be created immediately
 openscap_oval_immediate: false
 
+# Skip OVAL definition validation
+openscap_oval_skip_validation: false
+
 # Should daily report script be installed
 openscap_oval_schedule: false
 

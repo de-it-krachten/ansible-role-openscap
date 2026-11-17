@@ -176,17 +176,19 @@ function Report
   if [[ $Debug == true ]]
   then
     # Execute OpenSCAP
-    oscap oval eval --verbose DEVEL \
-                    --results ${openscap_results} \
-                    --report ${openscap_report} \
-                    $Args \
-                    ${openscap_file} || exit 1
+    oscap oval eval \
+      --verbose DEVEL \
+      --results ${openscap_results} \
+      --report ${openscap_report} \
+      $Args \
+      ${openscap_file} || exit 1
   else
     # Execute OpenSCAP
-    oscap oval eval --results ${openscap_results} \
-                    --report ${openscap_report} \
-                    $Args \
-                    ${openscap_file} > /dev/null &
+    oscap oval eval \
+      --results ${openscap_results} \
+      --report ${openscap_report} \
+      $Args \
+      ${openscap_file} > /dev/null &
     Wait4proc $! || exit 1
   fi
 
